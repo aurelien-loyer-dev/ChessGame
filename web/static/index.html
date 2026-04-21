@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>♛ Chess Arena</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="three.min.js"></script>
+    <script src="hero-3d.js"></script>
+</head>
+<body>
+
+    <!-- ===== SHARED 3D BACKGROUND ===== -->
+    <canvas id="hero-canvas"></canvas>
+
+    <!-- ===== ENTRY SCREEN ===== -->
+    <div id="mode-select-screen" class="screen active">
+        <div class="ms-wrapper">
+            <!-- Header -->
+            <div class="ms-hero">
+                <div class="ms-hero-icon">♔</div>
+                <h1 class="ms-title">Chess Arena</h1>
+                <p class="ms-subtitle">Joue maintenant avec ou sans compte.</p>
+            </div>
+
+            <!-- Cards -->
+            <div class="ms-cards">
+                <button id="btn-enter-auth" class="ms-card ms-card-light">
+                    <div class="ms-card-content">
+                        <span class="ms-card-icon">🔐</span>
+                        <div class="ms-card-text">
+                            <span class="ms-card-head">Connexion / Inscription</span>
+                            <span class="ms-card-sub">Classement et parties en ligne</span>
+                        </div>
+                    </div>
+                    <div class="ms-card-arrow">→</div>
+                </button>
+
+                <button id="btn-enter-guest" class="ms-card ms-card-accent">
+                    <div class="ms-card-content">
+                        <span class="ms-card-icon">👤</span>
+                        <div class="ms-card-text">
+                            <span class="ms-card-head">Jouer en invité</span>
+                            <span class="ms-card-sub">Partie immédiate sans compte</span>
+                        </div>
+                    </div>
+                    <div class="ms-card-arrow">→</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== AUTH SCREEN (Multiplayer) ===== -->
+    <div id="auth-screen" class="screen">
+        <div class="ms-wrapper auth-wrapper">
+            <div class="ms-hero auth-hero">
+                <div class="ms-hero-icon">⚔</div>
+                <h1 class="ms-title">Chess <span class="welcome-gradient">Arena</span></h1>
+                <p class="ms-subtitle">Créez un compte ou connectez-vous</p>
+            </div>
+
+            <!-- Tab selector -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tab-login">Connexion</button>
+                <button class="auth-tab" id="tab-register">Inscription</button>
+            </div>
+
+            <!-- Login form -->
+            <form id="login-form" class="auth-form">
+                <div class="auth-field">
+                    <label class="auth-label">Pseudo</label>
+                    <input type="text" id="login-username" class="auth-input"
+                        placeholder="Votre pseudo" autocomplete="username" maxlength="20" />
+                </div>
+                <div class="auth-field">
+                    <label class="auth-label">Mot de passe</label>
+                    <input type="password" id="login-password" class="auth-input"
+                        placeholder="••••••••" autocomplete="current-password" />
+                </div>
+                <p id="login-error" class="auth-error hidden"></p>
+                <button type="submit" class="btn-auth-submit">Se connecter →</button>
+            </form>
+
+            <!-- Register form -->
+            <form id="register-form" class="auth-form hidden">
+                <div class="auth-field">
+                    <label class="auth-label">Pseudo</label>
+                    <input type="text" id="register-username" class="auth-input"
+                        placeholder="2-20 caractères" autocomplete="username" maxlength="20" />
+                </div>
+                <div class="auth-field">
+                    <label class="auth-label">Mot de passe</label>
+                    <input type="password" id="register-password" class="auth-input"
+                        placeholder="4 caractères minimum" autocomplete="new-password" />
+                </div>
+                <p id="register-error" class="auth-error hidden"></p>
+                <button type="submit" class="btn-auth-submit">Créer le compte ✦</button>
+            </form>
+
+            <button id="btn-auth-back" class="btn-back-auth">← Retour accueil</button>
+        </div>
+    </div>
+
+    <!-- ===== LOBBY ===== -->
+    <div id="lobby" class="screen">
+        <div class="lobby-box">
+
+            <!-- Header -->
+            <div class="lobby-header">
+                <button id="btn-lobby-back" class="btn-back-lobby" onclick="window.chessApp && window.chessApp.backToEntryFromLobby()">← Retour</button>
+                <div class="lobby-icon">♔</div>
+                <h1>Chess<span>Arena</span></h1>
+                <p class="tagline" id="welcome-tagline">Prêt à en découdre ?</p>
+            </div>
+
+            <!-- Player stats bar (online mode only) -->
+            <div id="player-stats-bar" class="player-stats-bar hidden">
+                <div class="stats-left">
+                    <span class="stats-username" id="stats-username">Joueur</span>
+                    <div class="stats-record">
+                        <span class="stat-win" id="stats-wins">0</span><span class="stat-label">V</span>
+                        <span class="stat-sep">·</span>
+                        <span class="stat-draw" id="stats-draws">0</span><span class="stat-label">N</span>
+                        <span class="stat-sep">·</span>
+                        <span class="stat-loss" id="stats-losses">0</span><span class="stat-label">D</span>
+                    </div>
+                </div>
+                <div class="stats-right">
+                    <button id="btn-ranking" class="btn-stats-action" title="Classement">🏆</button>
+                    <button id="btn-logout" class="btn-stats-action btn-logout-icon" title="Déconnexion">⇥</button>
+                </div>
+            </div>
+
+            <!-- Card -->
+            <div class="lobby-card" id="lobby-content">
+
+                <!-- Mode switch -->
+                <div class="mode-switch">
+                    <button class="mode-btn active" data-mode="online">
+                        <span class="mode-icon">⚔</span>
+                        <span class="mode-text">En ligne</span>
+                    </button>
+                    <button class="mode-btn" data-mode="ai">
+                        <span class="mode-icon">🤖</span>
+                        <span class="mode-text">Contre l'IA</span>
+                    </button>
+                    <button class="mode-btn" data-mode="self">
+                        <span class="mode-icon">👥</span>
+                        <span class="mode-text">Local</span>
+                    </button>
+                </div>
+
+                <!-- Time control -->
+                <div class="field">
+                    <label class="field-label">⏱ Cadence</label>
+                    <div class="time-grid">
+                        <button class="time-btn" data-time="0">∞</button>
+                        <button class="time-btn" data-time="60">1 min</button>
+                        <button class="time-btn" data-time="180">3 min</button>
+                        <button class="time-btn active" data-time="300">5 min</button>
+                        <button class="time-btn" data-time="600">10 min</button>
+                        <button class="time-btn" data-time="900">15 min</button>
+                        <button class="time-btn" data-time="1800">30 min</button>
+                    </div>
+                </div>
+
+                <!-- Separator -->
+                <hr class="sep">
+
+                <!-- Online actions -->
+                <div id="online-actions" class="actions-panel">
+                    <button id="btn-matchmaking" class="btn-play btn-matchmaking">
+                        <span class="btn-play-icon">⚔</span>
+                        Trouver un adversaire
+                    </button>
+
+                    <div class="or-divider"><span>ou partie privée</span></div>
+
+                    <div class="private-row">
+                        <button id="btn-create" class="btn-secondary">
+                            <span class="btn-sec-icon">♜</span>
+                            Créer un salon
+                        </button>
+
+                        <div class="join-row">
+                            <input type="text" id="input-room" placeholder="CODE" maxlength="5" autocomplete="off" spellcheck="false">
+                            <button id="btn-join" class="btn-join-go">Rejoindre</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI actions -->
+                <div id="ai-actions" class="actions-panel hidden">
+                    <div class="field">
+                        <label class="field-label">🧠 Niveau de l'IA</label>
+                        <div class="segmented-control">
+                            <button class="diff-btn diff" data-diff="1">Facile</button>
+                            <button class="diff-btn diff active" data-diff="2">Moyen</button>
+                            <button class="diff-btn diff" data-diff="3">Difficile</button>
+                            <button class="diff-btn diff diff-gm" data-diff="4">Expert</button>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="field-label">♟ Votre couleur</label>
+                        <div class="color-grid">
+                            <button class="color-btn color-pick active" data-color="white">
+                                <div class="color-preview white"></div>
+                                Blancs
+                            </button>
+                            <button class="color-btn color-pick" data-color="random">
+                                🎲 Aléatoire
+                            </button>
+                            <button class="color-btn color-pick" data-color="black">
+                                <div class="color-preview black"></div>
+                                Noirs
+                            </button>
+                        </div>
+                    </div>
+                    <button id="btn-play-ai" class="btn-play">
+                        <span class="btn-play-icon">🤖</span>
+                        Jouer contre l'IA
+                    </button>
+                </div>
+
+                <!-- Self (local 2-player) actions -->
+                <div id="self-actions" class="actions-panel hidden">
+                    <button id="btn-play-self" class="btn-play">
+                        <span class="btn-play-icon">👥</span>
+                        Jouer en local (2 joueurs)
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Status toast -->
+            <div id="lobby-status" class="toast hidden"></div>
+
+            <!-- Online Players Panel -->
+            <div id="online-players-panel" class="online-panel hidden">
+                <div class="online-panel-header">
+                    <span class="online-panel-title">🟢 Joueurs en ligne</span>
+                    <span id="online-count" class="online-count">0</span>
+                </div>
+                <div id="online-players-list" class="online-players-list">
+                    <p class="online-empty">Aucun autre joueur en ligne</p>
+                </div>
+            </div>
+
+            <!-- Challenge received notification -->
+            <div id="challenge-toast" class="challenge-toast hidden">
+                <div class="challenge-toast-inner">
+                    <span class="challenge-icon">⚔</span>
+                    <div class="challenge-info">
+                        <strong id="challenge-from-name">Joueur</strong>
+                        <span>vous défie à une partie</span>
+                        <span id="challenge-time-label" class="challenge-time"></span>
+                    </div>
+                    <div class="challenge-actions">
+                        <button id="btn-challenge-accept" class="btn-challenge-accept">✓ Accepter</button>
+                        <button id="btn-challenge-decline" class="btn-challenge-decline">✕</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Waiting overlay (room code) -->
+            <div id="waiting-panel" class="hidden">
+                <div class="waiting-card">
+                    <span class="waiting-label">Code du salon</span>
+                    <div id="display-room-code" class="waiting-code">-----</div>
+                    <button id="btn-copy-code" class="btn-copy">📋 Copier le code</button>
+                </div>
+                <div class="waiting-anim">
+                    <div class="spinner"></div>
+                    <p>En attente d'un adversaire…</p>
+                </div>
+                <button id="btn-cancel" class="btn-cancel">✕ Annuler</button>
+            </div>
+
+            <!-- Matchmaking waiting overlay -->
+            <div id="matchmaking-panel" class="hidden">
+                <div class="matchmaking-visual">
+                    <div class="mm-pieces">
+                        <span class="mm-piece mm-piece-left">♔</span>
+                        <div class="mm-vs">
+                            <div class="mm-spinner"></div>
+                            <span>VS</span>
+                        </div>
+                        <span class="mm-piece mm-piece-right">♚</span>
+                    </div>
+                </div>
+                <div class="mm-info">
+                    <p class="mm-status">Recherche d'un adversaire…</p>
+                    <p class="mm-detail" id="mm-detail">Cadence : <span id="mm-time-display">5 min</span></p>
+                    <div class="mm-timer-row">
+                        <span class="mm-elapsed" id="mm-elapsed">0:00</span>
+                    </div>
+                </div>
+                <button id="btn-cancel-mm" class="btn-cancel">✕ Annuler la recherche</button>
+            </div>
+
+        </div>
+        <!-- Ranking overlay -->
+        <div id="ranking-overlay" class="overlay hidden">
+            <div class="dialog ranking-dialog">
+                <button id="btn-close-ranking" class="btn-close-ranking">✕</button>
+                <h2 class="ranking-title">🏆 Classement</h2>
+                <div id="ranking-list" class="ranking-list">
+                    <p class="ranking-loading">Chargement…</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== GAME ===== -->
+    <div id="game" class="screen">
+        <div class="game-col">
+
+            <!-- Opponent -->
+            <div class="player-row">
+                <div class="indicator" id="opponent-indicator"></div>
+                <span class="player-name" id="opponent-label">Adversaire</span>
+                <div class="captured-row" id="opponent-captured-list"></div>
+                <span class="advantage" id="opponent-advantage"></span>
+                <span class="timer" id="opponent-timer"></span>
+            </div>
+
+            <!-- Board -->
+            <div class="board-wrap">
+                <div class="labels-col" id="labels-left"></div>
+                <div>
+                    <div class="labels-row" id="labels-top"></div>
+                    <div class="board" id="board"></div>
+                    <div class="labels-row" id="labels-bottom"></div>
+                </div>
+                <div class="labels-col" id="labels-right"></div>
+            </div>
+
+            <!-- Self -->
+            <div class="player-row">
+                <div class="indicator" id="self-indicator"></div>
+                <span class="player-name" id="self-label">Vous</span>
+                <div class="captured-row" id="self-captured-list"></div>
+                <span class="advantage" id="self-advantage"></span>
+                <span class="timer" id="self-timer"></span>
+            </div>
+
+            <!-- Connection status banner -->
+            <div id="connection-banner" class="connection-banner hidden">
+                <span id="connection-banner-text">Reconnexion…</span>
+            </div>
+
+            <!-- Status + actions -->
+            <div class="status-row">
+                <button id="btn-back-menu" class="btn-sm hidden">↩ Menu</button>
+                <div class="status-text" id="game-status">En attente…</div>
+                <button id="btn-resign" class="btn-sm btn-red">🏳 Abandon</button>
+            </div>
+
+        </div>
+
+        <!-- Move history side panel (desktop) -->
+        <div class="history-panel" id="move-history">
+            <div class="history-title">Historique</div>
+            <div class="moves-list" id="moves-list"></div>
+        </div>
+
+        <!-- Promotion -->
+        <div id="promotion-dialog" class="overlay hidden">
+            <div class="dialog">
+                <h3>Promotion</h3>
+                <div class="promo-row" id="promotion-choices"></div>
+            </div>
+        </div>
+
+        <!-- Game over -->
+        <div id="game-over" class="overlay hidden">
+            <div class="dialog">
+                <div class="go-icon" id="game-over-icon">🏆</div>
+                <h2 id="game-over-title">Partie terminée</h2>
+                <p id="game-over-message"></p>
+                <button id="btn-new-game" class="btn-main">Nouvelle partie</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="chess.js"></script>
+    <script src="ai.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
