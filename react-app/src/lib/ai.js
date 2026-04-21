@@ -6,6 +6,20 @@
 
 import { ChessEngine } from './chess.js';
 
+var AI_API_BASE_URL = (import.meta.env.VITE_AI_API_BASE_URL || '').trim().replace(/\/$/, '');
+var AI_API_MOVE_PATH = (import.meta.env.VITE_AI_API_MOVE_PATH || '/api/ai-move').trim();
+var AI_API_KEY = (import.meta.env.VITE_AI_API_KEY || '').trim();
+var AI_API_TIMEOUT_MS = Number(import.meta.env.VITE_AI_API_TIMEOUT_MS || 15000);
+var AI_FORCE_SERVER = String(import.meta.env.VITE_AI_FORCE_SERVER || '').toLowerCase() === 'true';
+
+function toAbsoluteApiUrl(baseUrl, path) {
+  if (!baseUrl) return path;
+  if (/^https?:\/\//i.test(path)) return path;
+  return baseUrl + (path.startsWith('/') ? path : '/' + path);
+}
+
+var AI_MOVE_ENDPOINT = toAbsoluteApiUrl(AI_API_BASE_URL, AI_API_MOVE_PATH);
+
 export const AI_DIFFICULTY = {
   EASY: 1, MEDIUM: 2, HARD: 3, EXPERT: 4, GRANDMASTER: 5
 };
@@ -137,19 +151,57 @@ export var ChessAI = (function () {
     this.timeBudget = 0;
     this.aborted = false;
     this.serverAvailable = true;
+    this.serverRetryAt = 0;
   }
 
   AI.prototype.setDifficulty = function (level) { this.difficulty = level; };
 
+  AI.prototype._getServerSearchParams = function () {
+    switch (this.difficulty) {
+      case AI_DIFFICULTY.HARD: return { depth: 18, movetime: 3000, multipv: 1 };
+      case AI_DIFFICULTY.EXPERT: return { depth: 22, movetime: 7000, multipv: 1 };
+      case AI_DIFFICULTY.GRANDMASTER: return { depth: 26, movetime: 12000, multipv: 1 };
+      default: return { depth: 14, movetime: 1500, multipv: 1 };
+    }
+  };
+
+  AI.prototype._fetchJsonWithTimeout = function (url, options, timeoutMs) {
+    var controller = new AbortController();
+    var timer = setTimeout(function () { controller.abort(); }, timeoutMs);
+    var finalOptions = Object.assign({}, options, { signal: controller.signal });
+
+    return fetch(url, finalOptions)
+      .then(function (res) {
+        if (!res.ok) throw new Error('Server error ' + res.status);
+        return res.json();
+      })
+      .finally(function () {
+        clearTimeout(timer);
+      });
+  };
+
   AI.prototype._callServer = function (fen, difficulty) {
-    return fetch('/api/ai-move', {
+    var self = this;
+    var headers = { 'Content-Type': 'application/json' };
+    if (AI_API_KEY) headers['x-api-key'] = AI_API_KEY;
+
+    var payload = {
+      fen: fen,
+      difficulty: difficulty,
+      search: this._getServerSearchParams(),
+      source: 'react-app'
+    };
+
+    var requestOptions = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fen: fen, difficulty: difficulty })
-    }).then(function (res) {
-      if (!res.ok) throw new Error('Server error ' + res.status);
-      return res.json();
-    });
+      headers: headers,
+      body: JSON.stringify(payload)
+    };
+
+    return this._fetchJsonWithTimeout(AI_MOVE_ENDPOINT, requestOptions, AI_API_TIMEOUT_MS)
+      .catch(function () {
+        return self._fetchJsonWithTimeout(AI_MOVE_ENDPOINT, requestOptions, AI_API_TIMEOUT_MS);
+      });
   };
 
   AI.prototype._uciToMove = function (uciMove) {
@@ -167,26 +219,36 @@ export var ChessAI = (function () {
     if (allMoves.length === 0) return Promise.resolve(null);
     if (allMoves.length === 1) { var m = allMoves[0]; return Promise.resolve({ from: m.from, to: m.to, promotion: m.promotion ? 'Q' : undefined }); }
 
-    if (this.difficulty >= AI_DIFFICULTY.HARD) return this._findWithStockfish(engine, allMoves);
+    if (AI_FORCE_SERVER || this.difficulty >= AI_DIFFICULTY.HARD) return this._findWithStockfish(engine, allMoves);
     return Promise.resolve(this._findWithMinimax(engine, aiColor, allMoves));
+  };
+
+  AI.prototype._extractServerMove = function (data) {
+    if (!data) return null;
+    return data.move || data.bestmove || data.uci || null;
   };
 
   AI.prototype._findWithStockfish = function (engine, allMoves) {
     var self = this;
     var fen = engine.toFEN();
+    var now = Date.now();
 
-    if (this.serverAvailable) {
+    if (this.serverAvailable || now >= this.serverRetryAt) {
       return this._callServer(fen, this.difficulty)
         .then(function (data) {
           self.serverAvailable = true;
-          if (data && data.move) {
-            var parsed = self._uciToMove(data.move);
+          self.serverRetryAt = 0;
+          var bestMoveUci = self._extractServerMove(data);
+          if (bestMoveUci) {
+            var parsed = self._uciToMove(bestMoveUci);
             if (parsed) {
               var legal = allMoves.find(function (m) {
                 return m.from.row === parsed.from.row && m.from.col === parsed.from.col &&
                   m.to.row === parsed.to.row && m.to.col === parsed.to.col;
               });
-              if (legal) return parsed;
+              if (legal) {
+                return parsed;
+              }
             }
           }
           return self._findWithWASM(fen, allMoves);
@@ -194,6 +256,7 @@ export var ChessAI = (function () {
         .catch(function (err) {
           console.warn('[AI] Server unavailable, switching to WASM:', err.message);
           self.serverAvailable = false;
+          self.serverRetryAt = Date.now() + 20000;
           return self._findWithWASM(fen, allMoves);
         });
     }
