@@ -1,179 +1,135 @@
-# Chess Game - SFML
+# Chess Arena Monorepo
 
-Un jeu d'échecs complet avec interface graphique en C++ utilisant SFML.
+Projet d'echecs multi-frontends avec IA locale et integration API, compose de:
+1. Une app React/Vite moderne pour jouer localement, contre IA, ou en ligne.
+2. Un backend web Python (aiohttp) pour servir des assets et des endpoints API.
+3. Un prototype C++/SFML historique conserve dans `backup/`.
 
-![Chess Game](screenshots/chess_preview.png)
+## Apercu
 
-## Fonctionnalités
+- Frontend principal: `react-app/`
+- Backend web: `web/`
+- Legacy C++ (reference): `backup/`
 
-- ♟️ Règles d'échecs complètes
-  - Tous les mouvements de pièces standards
-  - Roque (petit et grand)
-  - Prise en passant
-  - Promotion des pions
-- 🎨 Interface utilisateur élégante
-  - Design moderne avec thème vert/crème
-  - Surbrillance des coups légaux
-  - Animation des mouvements
-  - Indicateur de tour
-  - Détection d'échec et mat
-- 🎮 Contrôles intuitifs
-  - Clic gauche pour sélectionner/déplacer
-  - Clic droit pour désélectionner
-  - Touches clavier pour la promotion
+## Fonctionnalites actuelles
 
-## Prérequis
+- Regles d'echecs completes: roque, en passant, promotion, echec/mat, pat.
+- Modes de jeu: local 2 joueurs, vs IA, online (via WebSocket/API).
+- IA hybride:
+1. Niveaux faibles/moyens avec moteur JS local.
+2. Niveaux eleves avec pipeline API/WASM et fallback de securite.
+- Interface moderne React avec historique des coups, timers, pieces capturees, overlays.
+- Fond 3D anime via Three.js.
 
-- macOS 10.15 ou plus récent
-- SFML 2.5 ou plus récent
-- Compilateur C++17 (Clang/GCC)
+## Structure du repo
 
-## Installation de SFML sur macOS
+```text
+ChessGame/
+|- README.md
+|- LICENSE
+|- react-app/          # Frontend principal (React + Vite)
+|- web/                # Backend Python (aiohttp) + static app
+`- backup/             # Ancienne version C++/SFML (reference)
+```
 
-### Option 1: Homebrew (recommandé)
+## Quickstart local
+
+### 1) Lancer le backend web
 
 ```bash
-# Installer Homebrew si ce n'est pas déjà fait
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# Installer SFML
-brew install sfml
+cd web
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python server.py
 ```
 
-### Option 2: Téléchargement direct
+Le serveur tourne par defaut sur `http://localhost:8080`.
 
-1. Télécharger SFML depuis [sfml-dev.org](https://www.sfml-dev.org/download/sfml/2.6.1/)
-2. Extraire dans `/usr/local/` ou configurer CMAKE_PREFIX_PATH
-
-## Compilation
+### 2) Lancer le frontend React
 
 ```bash
-# Créer le dossier de build
-mkdir build
-cd build
-
-# Configurer avec CMake
-cmake ..
-
-# Compiler
-make -j$(sysctl -n hw.ncpu)
+cd react-app
+npm install
+npm run dev
 ```
 
-### Compilation avec Xcode
+Vite demarre en general sur `http://localhost:5173`.
+La config proxy en dev redirige:
+1. `/api` vers `http://localhost:8080`
+2. `/ws` vers `ws://localhost:8080`
+
+## Build frontend
 
 ```bash
-mkdir build
-cd build
-cmake -G Xcode ..
-open ChessGame.xcodeproj
+cd react-app
+npm run build
+npm run preview
 ```
 
-## Exécution
+## Configuration IA (React)
 
-```bash
-# Depuis le dossier build
-./ChessGame
+Le frontend React supporte une API IA externe de fort niveau.
 
-# Ou sur macOS avec bundle
-open ChessGame.app
+1. Copier les variables de `react-app/.env.example` vers un fichier `.env`.
+2. Configurer au minimum l'URL du backend IA si necessaire.
+
+Variables disponibles:
+1. `VITE_AI_API_BASE_URL`
+2. `VITE_AI_API_MOVE_PATH`
+3. `VITE_AI_API_KEY`
+4. `VITE_AI_API_TIMEOUT_MS`
+5. `VITE_AI_FORCE_SERVER`
+
+Exemple:
+
+```env
+VITE_AI_API_BASE_URL=http://localhost:8080
+VITE_AI_API_MOVE_PATH=/api/ai-move
+VITE_AI_API_TIMEOUT_MS=15000
+VITE_AI_FORCE_SERVER=false
 ```
 
-## Contrôles
+## API et compatibilite
 
-| Action | Contrôle |
-|--------|----------|
-| Sélectionner une pièce | Clic gauche |
-| Déplacer une pièce | Clic gauche sur destination |
-| Annuler la sélection | Clic droit |
-| Nouvelle partie | Touche `R` |
-| Quitter | Touche `ESC` |
+Le frontend React consomme plusieurs endpoints, notamment:
+1. `POST /api/login`
+2. `POST /api/register`
+3. `POST /api/verify-token`
+4. `GET /api/ranking`
+5. `GET /api/online-players`
+6. `POST /api/ai-move`
+7. `WS /ws`
 
-### Promotion de pion
+Le serveur `web/server.py` actuel est une version simplifiee orientee demo. Selon ton usage (online complet + IA serveur), tu peux avoir besoin d'un backend plus complet que celui present dans `web/`.
 
-Quand un pion atteint la dernière rangée :
-- `Q` - Dame
-- `R` - Tour
-- `B` - Fou
-- `N` - Cavalier
+## Mode C++/SFML (legacy)
 
-## Structure du Projet
+Le code C++ se trouve dans `backup/` et reste utile pour reference technique. Ce n'est plus le frontend principal du projet.
 
-```
-echecs/
-├── CMakeLists.txt
-├── README.md
-├── include/
-│   ├── Types.hpp       # Types et énumérations
-│   ├── Piece.hpp       # Classe pièce
-│   ├── Board.hpp       # Plateau de jeu
-│   ├── ChessLogic.hpp  # Logique des échecs
-│   ├── Renderer.hpp    # Rendu graphique
-│   └── Game.hpp        # Boucle de jeu principale
-├── src/
-    ├── main.cpp
-    ├── Piece.cpp
-    ├── Board.cpp
-    ├── ChessLogic.cpp
-    ├── Renderer.cpp
-    └── Game.cpp
-```
+## Stack technique
 
-## Architecture
+- Frontend: React 18, Vite, Three.js
+- Backend: Python 3, aiohttp
+- IA: moteur JS, Stockfish WASM, API IA externe configurable
+- Analytics: `@vercel/analytics`
 
-### Classes principales
+## Idees sympas a ajouter
 
-- **Game** : Gère la boucle principale, les événements et coordonne les autres composants
-- **Board** : Représente l'échiquier avec les pièces
-- **ChessLogic** : Implémente toutes les règles d'échecs
-- **Renderer** : Gère l'affichage graphique avec SFML
-- **Piece** : Représente une pièce d'échec
+- Relecture de partie avec timeline interactive et eval bar.
+- Import/export PGN avec annotations.
+- Puzzle mode quotidien (mate in 2/3).
+- Opening explorer local (ECO + stats).
+- Profil ELO local avec historique de progression.
+- Theme editor (plateau, pieces, effets sonores, ambience).
 
-### Caractéristiques techniques
+## Roadmap
 
-- Utilisation des caractères Unicode pour les pièces (♔♕♖♗♘♙)
-- Rendu avec anti-aliasing
-- Animation fluide des mouvements
-- Vérification complète des coups légaux
-
-## Palette de couleurs
-
-| Élément | Couleur |
-|---------|---------|
-| Cases claires | #EEEED2 (Crème) |
-| Cases foncées | #769656 (Vert forêt) |
-| Sélection | #BACA44 (Jaune-vert) |
-| Coups légaux | Gris semi-transparent |
-| Captures | Rouge semi-transparent |
-| Échec | Rouge vif |
-
-## Dépannage
-
-### SFML non trouvé
-```bash
-# Vérifier l'installation de SFML
-brew info sfml
-
-# Si nécessaire, spécifier le chemin
-cmake -DSFML_DIR=/usr/local/lib/cmake/SFML ..
-```
-
-### Problèmes de polices
-Le jeu utilise les polices système macOS. Si les pièces ne s'affichent pas correctement, vérifiez que vous avez "Arial Unicode.ttf" ou "Apple Symbols.ttf" installés.
+- [ ] Unifier le backend API pour couvrir tous les appels React.
+- [ ] Ajouter tests automatiques pour la logique d'echecs et les hooks.
+- [ ] Stabiliser completement le mode GM en production (telemetrie IA + retries).
+- [ ] Ajouter sauvegarde cloud des parties et replay shareable.
 
 ## Licence
 
-Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
-
-## Améliorations futures
-
-- [ ] Mode 2 joueurs en réseau
-- [ ] IA avec minimax et élagage alpha-beta
-- [ ] Historique des coups avec notation algébrique
-- [ ] Sauvegarde/Chargement de parties (format PGN)
-- [ ] Thèmes personnalisables
-- [ ] Son et musique
-- [ ] Horloge d'échecs
-
----
-
-Développé avec ❤️ et SFML
+Projet sous licence MIT. Voir `LICENSE`.
