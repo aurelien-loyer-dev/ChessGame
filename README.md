@@ -1,4 +1,4 @@
-# Chess Arena Monorepo
+# Chess Arena
 
 Projet d'echecs multi-frontends avec IA locale et integration API, compose de:
 1. Une app React/Vite moderne pour jouer localement, contre IA, ou en ligne.
