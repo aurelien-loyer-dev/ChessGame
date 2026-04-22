@@ -3,6 +3,8 @@ import { ChessEngine } from '../lib/chess.js';
 import { ChessAI, stockfishBridge } from '../lib/ai.js';
 import { computeCaptured, computeCheckState, computeGameOverData } from '../utils.js';
 
+const AI_MOVE_TIMEOUT_MS = 20000;
+
 const INITIAL_STATE = {
   active: false,
   variant: 'ai',
@@ -114,7 +116,20 @@ export function useOfflineGame() {
     setState({ aiThinking: true });
 
     try {
-      const bestMove = await ai.findBestMove(engine, aiColor);
+      const bestMove = await Promise.race([
+        ai.findBestMove(engine, aiColor),
+        new Promise((resolve) => {
+          setTimeout(() => {
+            const legal = engine.getAllLegalMoves();
+            if (!legal.length) {
+              resolve(null);
+              return;
+            }
+            const m = legal[Math.floor(Math.random() * legal.length)];
+            resolve({ from: m.from, to: m.to, promotion: m.promotion ? 'Q' : undefined });
+          }, AI_MOVE_TIMEOUT_MS);
+        })
+      ]);
 
       // Artificial delay for easy levels
       const baseDelay = ai.difficulty === 1 ? 200 : ai.difficulty === 2 ? 300 : 0;
@@ -147,6 +162,9 @@ export function useOfflineGame() {
     } catch (e) {
       console.error('[useOfflineGame] AI error:', e);
       setState({ aiThinking: false });
+    } finally {
+      const s = stateRef.current;
+      if (s.aiThinking) setState({ aiThinking: false });
     }
   }, [getEngineSnapshot, setState, stopTimer]);
 

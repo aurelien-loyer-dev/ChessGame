@@ -233,9 +233,9 @@ export var ChessAI = (function () {
 
   AI.prototype._findWithFallbackMinimax = function (engine, allMoves) {
     var budgets = {};
-    budgets[AI_DIFFICULTY.HARD]        = 3500;
-    budgets[AI_DIFFICULTY.EXPERT]      = 7000;
-    budgets[AI_DIFFICULTY.GRANDMASTER] = 12000;
+    budgets[AI_DIFFICULTY.HARD]        = 500;
+    budgets[AI_DIFFICULTY.EXPERT]      = 700;
+    budgets[AI_DIFFICULTY.GRANDMASTER] = 900;
     var budget = budgets[this.difficulty] || 3500;
 
     this.nodesSearched = 0;
@@ -288,6 +288,38 @@ export var ChessAI = (function () {
     }
 
     return bestMove;
+  };
+
+  AI.prototype._findQuickSafeMove = function (engine, allMoves) {
+    var best = null;
+    var bestScore = -Infinity;
+
+    for (var i = 0; i < allMoves.length; i++) {
+      var m = allMoves[i];
+      var score = 0;
+      var attacker = engine.board[m.from.row][m.from.col];
+      var target = engine.board[m.to.row][m.to.col];
+
+      // Prefer winning captures and promotions when we need an emergency move.
+      if (target) {
+        var gain = (PV[target.type] || 0) - (attacker ? (PV[attacker.type] || 0) : 0) * 0.2;
+        score += 200 + gain;
+      }
+      if (m.isEnPassant) score += 160;
+      if (m.promotion) score += 300;
+
+      // Small center preference to avoid obviously passive emergency moves.
+      var dc = Math.abs(3.5 - m.to.col);
+      var dr = Math.abs(3.5 - m.to.row);
+      score += 14 - (dc + dr) * 2;
+
+      if (score > bestScore) {
+        bestScore = score;
+        best = { from: m.from, to: m.to, promotion: m.promotion ? 'Q' : undefined };
+      }
+    }
+
+    return best || this._randomMove(allMoves);
   };
 
   // ── Engine pipeline: Lichess → Server → WASM → fallback minimax ──────────
@@ -399,12 +431,12 @@ export var ChessAI = (function () {
           var p = self._uciToMove(res.move);
           if (p && self._legal(p, allMoves)) return p;
         }
-        // Stockfish gave no valid move — use strong JS fallback
-        return self._findWithFallbackMinimax(engine, allMoves);
+        // Stockfish gave no valid move — use instant safe fallback to avoid UI freeze
+        return self._findQuickSafeMove(engine, allMoves);
       })
       .catch(function () {
-        // Stockfish failed entirely (timeout, load error…) — use strong JS fallback
-        return self._findWithFallbackMinimax(engine, allMoves);
+        // Stockfish failed entirely (timeout/load error) — keep the app responsive
+        return self._findQuickSafeMove(engine, allMoves);
       });
   };
 
