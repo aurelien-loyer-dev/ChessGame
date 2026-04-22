@@ -4,6 +4,7 @@ import { useOfflineGame } from './hooks/useOfflineGame.js';
 import { useOnlineGame } from './hooks/useOnlineGame.js';
 import { PIECE_SYMBOLS } from './lib/chess.js';
 import { PIECE_ORDER, PIECE_VALUES_DISPLAY, formatTime, generateGuestName } from './utils.js';
+import { Analytics } from "@vercel/analytics/react";
 
 const TIME_OPTIONS = [0, 60, 180, 300, 600, 900, 1800];
 
