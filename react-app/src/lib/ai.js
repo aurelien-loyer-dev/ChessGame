@@ -229,7 +229,68 @@ export var ChessAI = (function () {
     return Promise.resolve(this._findWithMinimax(engine, aiColor, allMoves));
   };
 
-  // ── Engine pipeline: Lichess → Server → WASM ─────────────────────────────
+  // ── Iterative-deepening fallback (used when Stockfish WASM is unavailable) ─
+
+  AI.prototype._findWithFallbackMinimax = function (engine, allMoves) {
+    var budgets = {};
+    budgets[AI_DIFFICULTY.HARD]        = 3500;
+    budgets[AI_DIFFICULTY.EXPERT]      = 7000;
+    budgets[AI_DIFFICULTY.GRANDMASTER] = 12000;
+    var budget = budgets[this.difficulty] || 3500;
+
+    this.nodesSearched = 0;
+    this.timeStart     = Date.now();
+    this.timeBudget    = budget;
+    this.aborted       = false;
+
+    var bestMove = this._randomMove(allMoves); // always have a move
+    var ordered  = this._orderMoves(allMoves, engine);
+
+    for (var depth = 1; depth <= 30; depth++) {
+      if (Date.now() - this.timeStart > budget * 0.85) break;
+
+      var depthBest      = null;
+      var depthBestScore = -Infinity;
+      this.aborted       = false;
+
+      for (var i = 0; i < ordered.length; i++) {
+        var mv    = ordered[i];
+        var promo = mv.promotion ? 'Q' : undefined;
+        var copy  = this._clone(engine);
+        if (!copy.makeMove(mv.from, mv.to, promo)) continue;
+
+        var score = -this._negamax(copy, depth - 1, -Infinity, -depthBestScore);
+        if (this.aborted) break;
+
+        if (score > depthBestScore || !depthBest) {
+          depthBestScore = score;
+          depthBest      = { from: mv.from, to: mv.to, promotion: promo };
+        }
+      }
+
+      if (!this.aborted && depthBest) {
+        bestMove = depthBest;
+        // Move best to front for next iteration (simple history heuristic)
+        var front = null;
+        var rest  = [];
+        for (var j = 0; j < ordered.length; j++) {
+          var om = ordered[j];
+          if (om.from.row === depthBest.from.row && om.from.col === depthBest.from.col &&
+              om.to.row   === depthBest.to.row   && om.to.col   === depthBest.to.col) {
+            front = om;
+          } else {
+            rest.push(om);
+          }
+        }
+        if (front) { rest.unshift(front); ordered = rest; }
+      }
+      if (this.aborted) break;
+    }
+
+    return bestMove;
+  };
+
+  // ── Engine pipeline: Lichess → Server → WASM → fallback minimax ──────────
 
   AI.prototype._findWithEngine = function (engine, allMoves) {
     var self = this;
@@ -239,15 +300,15 @@ export var ChessAI = (function () {
       return this._callLichess(fen)
         .then(function (uci) {
           if (uci) { var p = self._uciToMove(uci); if (p && self._legal(p, allMoves)) return p; }
-          return self._serverThenWasm(fen, allMoves);
+          return self._serverThenWasm(fen, allMoves, engine);
         })
-        .catch(function () { return self._serverThenWasm(fen, allMoves); });
+        .catch(function () { return self._serverThenWasm(fen, allMoves, engine); });
     }
 
-    return this._serverThenWasm(fen, allMoves);
+    return this._serverThenWasm(fen, allMoves, engine);
   };
 
-  AI.prototype._serverThenWasm = function (fen, allMoves) {
+  AI.prototype._serverThenWasm = function (fen, allMoves, engine) {
     var self = this;
     if (this.serverAvailable || Date.now() >= this.serverRetryAt) {
       return this._callServer(fen)
@@ -255,15 +316,15 @@ export var ChessAI = (function () {
           self.serverAvailable = true; self.serverRetryAt = 0;
           var uci = self._extractUCI(data);
           if (uci) { var p = self._uciToMove(uci); if (p && self._legal(p, allMoves)) return p; }
-          return self._findWithWASM(fen, allMoves);
+          return self._findWithWASM(fen, allMoves, engine);
         })
         .catch(function () {
           self.serverAvailable = false;
           self.serverRetryAt   = Date.now() + 20000;
-          return self._findWithWASM(fen, allMoves);
+          return self._findWithWASM(fen, allMoves, engine);
         });
     }
-    return this._findWithWASM(fen, allMoves);
+    return this._findWithWASM(fen, allMoves, engine);
   };
 
   // ── Lichess Cloud Eval (free, no key, depth 40+) ─────────────────────────
@@ -330,7 +391,7 @@ export var ChessAI = (function () {
     }
   };
 
-  AI.prototype._findWithWASM = function (fen, allMoves) {
+  AI.prototype._findWithWASM = function (fen, allMoves, engine) {
     var self = this;
     return stockfishBridge.search(fen, this._wasmOptions())
       .then(function (res) {
@@ -338,9 +399,13 @@ export var ChessAI = (function () {
           var p = self._uciToMove(res.move);
           if (p && self._legal(p, allMoves)) return p;
         }
-        return self._randomMove(allMoves);
+        // Stockfish gave no valid move — use strong JS fallback
+        return self._findWithFallbackMinimax(engine, allMoves);
       })
-      .catch(function () { return self._randomMove(allMoves); });
+      .catch(function () {
+        // Stockfish failed entirely (timeout, load error…) — use strong JS fallback
+        return self._findWithFallbackMinimax(engine, allMoves);
+      });
   };
 
   // ── Negamax with alpha-beta + quiescence (levels 1-2) ────────────────────
