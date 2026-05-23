@@ -64,14 +64,14 @@ function ChessBackground() {
     renderer.setSize(innerWidth, innerHeight);
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 
-    const COUNT = 420;
+    const COUNT = 600;
     const positions = new Float32Array(COUNT * 3);
     const colors = new Float32Array(COUNT * 3);
 
     const palette = [
-      new THREE.Color('#f59e0b'), // gold
-      new THREE.Color('#0d9488'), // teal
-      new THREE.Color('#94a3b8'), // slate
+      new THREE.Color('#8b5cf6'), // violet
+      new THREE.Color('#06b6d4'), // cyan
+      new THREE.Color('#ec4899'), // pink
     ];
 
     for (let i = 0; i < COUNT; i++) {
@@ -89,10 +89,10 @@ function ChessBackground() {
     geo.setAttribute('color',    new THREE.BufferAttribute(colors, 3));
 
     const mat = new THREE.PointsMaterial({
-      size: 0.32,
+      size: 0.28,
       vertexColors: true,
       transparent: true,
-      opacity: 0.48,
+      opacity: 0.55,
       sizeAttenuation: true,
     });
 
@@ -380,8 +380,8 @@ export function App() {
         <div className="screen active center-screen">
           <div className="panel large">
             <span className="hero-icon">♛</span>
-            <h1 className="app-title">Chess Arena</h1>
-            <p className="subtitle">Joue maintenant avec ou sans compte.</p>
+            <h1 className="app-title">CHESS ARENA</h1>
+            <p className="subtitle">// REJOINS L'ARÈNE. DÉFENDS TON RANG.</p>
             <div className="btn-grid">
               <button className="btn-main" onClick={() => setScreen('auth')}>
                 Connexion / Inscription
