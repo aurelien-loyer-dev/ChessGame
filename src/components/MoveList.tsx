@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { PlayedMove } from '../game/line';
 import { MOVE_CLASS_META, type MoveClass } from '../lib/engine/eval';
+import { frSan } from '../lib/chess';
 
 export function MoveList({
   moves,
@@ -54,7 +55,7 @@ export function MoveList({
         data-current={ply === i + 1}
         onClick={() => onSelect(i + 1)}
       >
-        <span>{moves[i].san}</span>
+        <span>{frSan(moves[i].san)}</span>
         {meta && cls !== 'best' && cls !== 'excellent' && cls !== 'good' && <em>{meta.symbol}</em>}
       </button>
     );

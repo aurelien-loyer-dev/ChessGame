@@ -401,3 +401,11 @@
 @media (max-width: 760px) {
   .consent-banner { left: max(12px, env(safe-area-inset-left)); right: max(12px, env(safe-area-inset-right)); bottom: calc(80px + env(safe-area-inset-bottom)); flex-wrap: wrap; }
 }
+
+.home-btn { align-self: flex-start; margin-left: -10px; }
+.page-nav { display: flex; align-items: center; gap: 4px; margin-bottom: 10px; }
+.lesson-nav { display: flex; gap: 2px; margin-left: -10px; }
+.lesson-nav .home-btn { margin-left: 0; }
+.puzzle-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.puzzle-top .home-btn { margin-left: -10px; }
+.game-head { flex-wrap: wrap; }

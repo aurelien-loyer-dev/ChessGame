@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, Box, Flag, Handshake, Lightbulb, RefreshCw, Square, Undo2 } from 'lucide-react';
+import { ArrowLeft, Box, House, Flag, Handshake, Lightbulb, RefreshCw, Square, Undo2 } from 'lucide-react';
 import type { Color } from '../lib/types';
 import { useSession, type OfflineSession } from '../store/session';
 import { useProfile } from '../store/profile';
@@ -120,6 +120,9 @@ function OfflineGameView({ session }: { session: OfflineSession }) {
         <div className="panel game-head">
           <button className="btn ghost sm" onClick={() => navigate('play')}>
             <ArrowLeft /> Menu
+          </button>
+          <button className="btn ghost sm" onClick={() => navigate('')}>
+            <House /> Accueil
           </button>
           <span className="chip mono">{session.tc.initial ? `${session.tc.initial / 60}+${session.tc.increment}` : '∞'}</span>
           <span className="chip">{session.mode === 'bot' ? 'vs IA' : 'Local'}</span>

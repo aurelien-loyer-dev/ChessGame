@@ -1,3 +1,4 @@
+import { HomeButton } from '../components/HomeButton';
 import { motion } from 'motion/react';
 import { CheckCircle2, ChevronRight } from 'lucide-react';
 import { COURSES, lessonKey } from '../data/lessons';
@@ -11,6 +12,9 @@ export function Learn() {
 
   return (
     <div className="container">
+      <nav className="page-nav">
+        <HomeButton />
+      </nav>
       <header className="page-head">
         <div>
           <p className="eyebrow">Apprendre</p>

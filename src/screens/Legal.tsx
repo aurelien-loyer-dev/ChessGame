@@ -1,3 +1,4 @@
+import { HomeButton } from '../components/HomeButton';
 import { navigate } from '../lib/router';
 import { HOST, LEGAL_UPDATED, PUBLISHER } from '../data/legal';
 import { useConsent } from '../store/consent';
@@ -21,6 +22,9 @@ export function Legal({ doc = 'mentions' }: { doc?: string }) {
   const current = DOCS.some((d) => d.id === doc) ? doc : 'mentions';
   return (
     <div className="container legal">
+      <nav className="page-nav">
+        <HomeButton />
+      </nav>
       <header className="page-head">
         <div>
           <p className="eyebrow">Informations légales</p>

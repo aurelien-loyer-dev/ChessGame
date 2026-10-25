@@ -1,3 +1,4 @@
+import { HomeButton } from '../components/HomeButton';
 import { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import { Activity, Crown, Download, Pencil, Trash2, Upload } from 'lucide-react';
@@ -73,6 +74,9 @@ export function Profile() {
 
   return (
     <div className="container profile">
+      <nav className="page-nav">
+        <HomeButton />
+      </nav>
       <section className="profile-head panel">
         <ProfileAvatar glyph={p.avatar.glyph} hue={p.avatar.hue} size={76} />
         <div className="profile-id">

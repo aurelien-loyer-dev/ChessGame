@@ -1,3 +1,4 @@
+import { HomeButton } from '../components/HomeButton';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ArrowRight, Eye, Flame, Lightbulb, Timer, Trophy, X, Zap } from 'lucide-react';
@@ -109,6 +110,7 @@ function Rated({ daily }: { daily: boolean }) {
       </div>
       <aside className="puzzle-side panel">
         <div className="puzzle-top">
+          <HomeButton />
           <ModeTabs current={daily ? 'daily' : ''} />
         </div>
         <div className="puzzle-rating">
@@ -291,6 +293,7 @@ function Rush() {
       </div>
       <aside className="puzzle-side panel">
         <div className="puzzle-top">
+          <HomeButton />
           <ModeTabs current="rush" />
         </div>
         {phase === 'intro' && (
