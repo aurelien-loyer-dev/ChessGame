@@ -1,0 +1,17 @@
+{
+  "name": "chess-arena",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "dev": "npm run dev -w @chess/server & npm run dev -w @chess/web",
+    "dev:web": "npm run dev -w @chess/web",
+    "dev:server": "npm run dev -w @chess/server",
+    "build": "npm run build -w @chess/web",
+    "start": "npm run start -w @chess/server",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": { "node": ">=20" }
+}

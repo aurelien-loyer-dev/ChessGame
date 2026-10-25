@@ -1,0 +1,35 @@
+.game-head { display: flex; align-items: center; gap: 8px; }
+.game-head .btn { margin-right: auto; }
+.moves-panel { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; }
+.game-actions { display: flex; flex-direction: column; gap: 8px; }
+.view-row { justify-content: space-between; }
+
+.gameover { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; perspective: 600px; }
+.gameover-mark {
+  font: 700 54px/1 var(--font-display);
+  letter-spacing: 0.04em;
+  margin: 6px 0 8px;
+  color: var(--text);
+}
+.gameover.win .gameover-mark { color: var(--brass); text-shadow: 0 0 40px rgb(var(--brass-rgb) / 0.4); }
+.gameover.loss .gameover-mark { color: var(--text-dim); }
+.gameover h2 { font-size: 28px; }
+.gameover-rating { font-size: 22px; font-weight: 600; margin-top: 4px; }
+.gameover-rating .up { color: rgb(var(--good-rgb)); font-size: 15px; }
+.gameover-rating .down { color: rgb(var(--bad-rgb)); font-size: 15px; }
+.gameover-actions { width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+
+.emote-bar { display: flex; gap: 4px; flex-wrap: wrap; }
+.emote-bar button { min-width: 38px; }
+.emote-float {
+  position: absolute;
+  z-index: 30;
+  font-size: 28px;
+  pointer-events: none;
+  filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.5));
+}
+.draw-offer { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; background: rgb(var(--warn-rgb) / 0.1); border: 1px solid rgb(var(--warn-rgb) / 0.35); }
+.draw-offer span { flex: 1; font-weight: 600; font-size: 14px; }
+.conn-warn { font-size: 12px; color: rgb(var(--warn-rgb)); }
+.strip-wrap { position: relative; }
+.conn-icon { width: 15px; height: 15px; color: rgb(var(--warn-rgb)); }

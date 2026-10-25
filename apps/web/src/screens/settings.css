@@ -1,0 +1,9 @@
+.settings { display: flex; flex-direction: column; gap: 20px; }
+.settings section { display: flex; flex-direction: column; gap: 10px; }
+.theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.theme-swatch { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg-2); cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text-dim); }
+.theme-swatch.active { border-color: rgb(var(--accent-rgb) / 0.6); color: var(--text); }
+.swatch-board { width: 100%; aspect-ratio: 1; border-radius: 6px; }
+.settings-toggles { gap: 12px !important; }
+.volume-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-weight: 600; font-size: 14px; }
+.volume-row input { flex: 1; max-width: 240px; accent-color: var(--accent); }
