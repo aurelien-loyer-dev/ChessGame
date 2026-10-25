@@ -1,3 +1,4 @@
+import { HomeButton } from '../components/HomeButton';
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Check, Copy, Crown, Link2, Loader2, Play, Radar, Users, Wifi, WifiOff, X } from 'lucide-react';
@@ -23,6 +24,9 @@ export function PlaySetup({ tab = 'bot', code }: { tab?: string; code?: string }
   const current = TABS.some((t) => t.id === tab) ? tab : 'bot';
   return (
     <div className="container">
+      <nav className="page-nav">
+        <HomeButton />
+      </nav>
       <header className="page-head">
         <div>
           <p className="eyebrow">Nouvelle partie</p>

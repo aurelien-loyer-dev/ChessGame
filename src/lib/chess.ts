@@ -118,3 +118,10 @@ export function validateFen(fen: string): string | null {
     return e instanceof Error ? e.message : 'FEN invalide';
   }
 }
+
+const FR_PIECES: Record<string, string> = { K: 'R', Q: 'D', R: 'T', B: 'F', N: 'C' };
+
+/** Displays a SAN move with French piece letters (Nf3 → Cf3, e8=Q → e8=D). PGN export keeps English SAN. */
+export function frSan(san: string): string {
+  return san.replace(/[KQRBN]/g, (p) => FR_PIECES[p]);
+}

@@ -47,3 +47,13 @@ describe('chess helpers', () => {
     expect(detectEnd(START_FEN, moves)).toEqual({ result: '0-1', reason: 'checkmate' });
   });
 });
+
+describe('French notation', () => {
+  it('translates piece letters only', async () => {
+    const { frSan } = await import('../lib/chess');
+    expect(frSan('Nxe5+')).toBe('Cxe5+');
+    expect(frSan('e8=Q#')).toBe('e8=D#');
+    expect(frSan('O-O')).toBe('O-O');
+    expect(frSan('Kf7')).toBe('Rf7');
+  });
+});

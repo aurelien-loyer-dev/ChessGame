@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
-import { Activity, RotateCcw, Swords } from 'lucide-react';
+import { Activity, House, RotateCcw, Swords } from 'lucide-react';
+import { navigate } from '../../lib/router';
 import type { Color, EndReason, GameResult } from '../../lib/types';
 import { Modal } from '../ui/Modal';
 import { REASON_LABEL } from '../../game/line';
@@ -75,6 +76,9 @@ export function GameOverModal({
               <Swords /> Nouvelle partie
             </button>
           </div>
+          <button className="btn ghost block" onClick={() => navigate('')}>
+            <House /> Retour à l’accueil
+          </button>
         </div>
       </div>
     </Modal>

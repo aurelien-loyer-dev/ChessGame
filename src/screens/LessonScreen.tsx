@@ -1,6 +1,7 @@
+import { HomeButton } from '../components/HomeButton';
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowLeft, ArrowRight, CheckCircle2, Lightbulb, RotateCcw } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Lightbulb, RotateCcw } from 'lucide-react';
 import { Chess } from 'chess.js';
 import type { Color } from '../lib/types';
 import { findLesson, lessonKey, type Course, type Lesson, type LessonStep } from '../data/lessons';
@@ -59,9 +60,10 @@ function LessonRunner({ course, lesson, next }: { course: Course; lesson: Lesson
 
   const header = (
     <>
-      <button className="btn ghost sm back" onClick={() => navigate('learn')}>
-        <ArrowLeft /> {course.title}
-      </button>
+      <div className="lesson-nav">
+        <HomeButton to="learn" label={course.title} />
+        <HomeButton />
+      </div>
       <h1 className="lesson-title">{lesson.title}</h1>
       <div className="step-dots" aria-label={`Étape ${stepIndex + 1} sur ${lesson.steps.length}`}>
         {lesson.steps.map((_, i) => (
