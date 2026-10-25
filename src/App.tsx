@@ -12,7 +12,10 @@ import { Learn } from './screens/Learn';
 import { LessonScreen } from './screens/LessonScreen';
 import { Puzzles } from './screens/Puzzles';
 import { Profile } from './screens/Profile';
-import { Onboarding } from './screens/Onboarding';
+import { Register } from './screens/Register';
+import { Legal } from './screens/Legal';
+import { ConsentBanner } from './components/ConsentBanner';
+import { useConsent } from './store/consent';
 import { useProfile } from './store/profile';
 import { Toasts } from './components/Toasts';
 
@@ -50,6 +53,8 @@ function Screen({ route }: { route: string[] }) {
       );
     case 'profile':
       return <Profile />;
+    case 'legal':
+      return <Legal doc={a} />;
     default:
       return <Home />;
   }
@@ -58,7 +63,8 @@ function Screen({ route }: { route: string[] }) {
 export function App() {
   const route = useRoute();
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const name = useProfile((s) => s.name);
+  const registered = useProfile((s) => s.registeredAt !== null);
+  const analytics = useConsent((s) => s.analytics);
   const section = route[0] ?? '';
   const activeNav = section === 'game' || section === 'online' ? 'play' : section;
   const immersive = section === 'game' || section === 'online';
@@ -101,6 +107,11 @@ export function App() {
           <Settings />
           <span>Réglages</span>
         </button>
+        <div className="rail-legal rail-settings">
+          <a href="#/legal/mentions">Mentions</a>
+          <a href="#/legal/confidentialite">Confidentialité</a>
+          <a href="#/legal/cookies">Cookies</a>
+        </div>
       </nav>
 
       <main className="stage">
@@ -119,9 +130,10 @@ export function App() {
       </main>
 
       <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
-      {!name && <Onboarding />}
+      {!registered && section !== 'legal' && <Register />}
+      <ConsentBanner />
       <Toasts />
-      {__VERCEL__ && <Analytics />}
+      {__VERCEL__ && analytics === true && <Analytics />}
     </div>
   );
 }

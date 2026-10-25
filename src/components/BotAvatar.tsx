@@ -32,3 +32,12 @@ export function hueFromName(name: string): number {
   for (const ch of name) h = (h * 31 + ch.charCodeAt(0)) % 360;
   return h;
 }
+
+/** The signed-up player's emblem. */
+export function ProfileAvatar({ glyph, hue, size = 44 }: { glyph: string; hue: number; size?: number }) {
+  return (
+    <span className="bot-avatar" aria-hidden style={{ width: size, height: size, fontSize: size * 0.5, ['--hue' as string]: hue }}>
+      {glyph}
+    </span>
+  );
+}

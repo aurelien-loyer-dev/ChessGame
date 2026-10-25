@@ -28,8 +28,32 @@ export interface RatingPoint {
   rating: number;
 }
 
+export type PlayerLevel = 'discover' | 'rules' | 'club' | 'strong';
+
+export const LEVELS: Record<PlayerLevel, { label: string; desc: string; rating: number; botId: string; course: string }> = {
+  discover: { label: 'Je découvre', desc: 'Je ne connais pas encore bien les règles.', rating: 400, botId: 'pixel', course: 'bases/plateau' },
+  rules: { label: 'Je connais les règles', desc: 'Je joue de temps en temps, sans plan précis.', rating: 800, botId: 'nova', course: 'mats/berger' },
+  club: { label: 'Joueur régulier', desc: 'Je connais les tactiques et quelques ouvertures.', rating: 1200, botId: 'orion', course: 'tactiques/fourchette' },
+  strong: { label: 'Confirmé', desc: 'Je joue en club ou en ligne au-dessus de 1500.', rating: 1600, botId: 'atlas', course: 'finales/carre' },
+};
+
+export interface Avatar {
+  glyph: string;
+  hue: number;
+}
+
+export interface Registration {
+  name: string;
+  avatar: Avatar;
+  level: PlayerLevel;
+}
+
 interface ProfileState {
   name: string;
+  avatar: Avatar;
+  level: PlayerLevel | null;
+  /** Timestamp of the sign-up; null until the profile has been created. */
+  registeredAt: number | null;
   rating: number;
   ratingHistory: RatingPoint[];
   games: SavedGame[];
@@ -45,6 +69,8 @@ interface ProfileState {
   dailyStreak: { lastDay: string; count: number };
 
   setName: (name: string) => void;
+  register: (r: Registration) => void;
+  setAvatar: (a: Avatar) => void;
   recordGame: (game: SavedGame) => { before: number; after: number } | null;
   updateGame: (id: string, patch: Partial<SavedGame>) => void;
   recordPuzzle: (id: string, rating: number, solved: boolean) => { before: number; after: number };
@@ -65,6 +91,9 @@ function today() {
 
 const initial = {
   name: '',
+  avatar: { glyph: '♞', hue: 200 } as Avatar,
+  level: null as PlayerLevel | null,
+  registeredAt: null as number | null,
   rating: 1000,
   ratingHistory: [] as RatingPoint[],
   games: [] as SavedGame[],
@@ -86,6 +115,23 @@ export const useProfile = create<ProfileState>()(
       ...initial,
 
       setName: (name) => set({ name }),
+
+      register: ({ name, avatar, level }) => {
+        const start = LEVELS[level];
+        // A brand-new profile starts at the self-assessed strength; an existing one keeps its history.
+        const fresh = get().ratingHistory.length === 0 && get().puzzleHistory.length === 0;
+        set({
+          name,
+          avatar,
+          level,
+          registeredAt: Date.now(),
+          lastBotId: start.botId,
+          ...(fresh ? { rating: start.rating, puzzleRating: start.rating } : {}),
+        });
+        get().touchDaily();
+      },
+
+      setAvatar: (avatar) => set({ avatar }),
 
       recordGame: (game) => {
         const state = get();

@@ -13,6 +13,7 @@ import { COURSES, lessonKey } from '../data/lessons';
 import { REASON_LABEL } from '../game/line';
 import { TIME_CONTROLS } from '../lib/types';
 import { parseUci } from '../lib/chess';
+import { PUBLISHER } from '../data/legal';
 import './home.css';
 
 const Hero3D = lazy(() => import('../three/Hero3D'));
@@ -210,6 +211,15 @@ export function Home() {
           )}
         </motion.article>
       </motion.section>
+
+      <footer className="site-footer">
+        <span>© {new Date().getFullYear()} {PUBLISHER.name} · Chess Arena</span>
+        <nav aria-label="Informations légales">
+          <a href="#/legal/mentions">Mentions légales</a>
+          <a href="#/legal/confidentialite">Confidentialité</a>
+          <a href="#/legal/cookies">Cookies</a>
+        </nav>
+      </footer>
     </div>
   );
 }

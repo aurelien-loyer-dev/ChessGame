@@ -365,3 +365,39 @@
 .onboarding { display: flex; flex-direction: column; gap: 12px; }
 .onboarding h2 { font-size: 26px; }
 .onboarding form { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+
+.consent-banner {
+  position: fixed;
+  z-index: 120;
+  left: calc(var(--rail) + 20px);
+  bottom: max(20px, env(safe-area-inset-bottom));
+  max-width: 560px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  box-shadow: 0 24px 60px -20px rgb(0 0 0 / 0.7);
+}
+.consent-banner p { flex: 1; font-size: 13.5px; color: var(--text-dim); }
+.consent-icon { width: 22px; height: 22px; color: var(--brass); flex: none; }
+.rail-legal { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.rail-legal a { font-size: 9.5px; color: var(--text-faint); text-decoration: none; text-align: center; line-height: 1.3; }
+.rail-legal a:hover { color: var(--text); }
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px 20px;
+  margin-top: 40px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--text-faint);
+}
+.site-footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
+.site-footer a { color: var(--text-dim); text-decoration: none; }
+.site-footer a:hover { color: var(--text); }
+@media (max-width: 760px) {
+  .consent-banner { left: max(12px, env(safe-area-inset-left)); right: max(12px, env(safe-area-inset-right)); bottom: calc(80px + env(safe-area-inset-bottom)); flex-wrap: wrap; }
+}

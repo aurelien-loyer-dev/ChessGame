@@ -23,7 +23,9 @@ Jeu d'échecs complet qui tourne entièrement dans le navigateur : IA calibrées
 - Transitions 3D entre écrans, plateau 3D orbital (pièces procédurales), scène 3D sur l'accueil.
 - Plateau 2D : glisser-déposer ou clic, animations, flèches au clic droit, promotion visuelle, 4 thèmes.
 - Sons synthétisés, raccourcis clavier (`←` `→` `F`), responsive mobile.
-- Profil local : Elo contre l'IA, historique, échelle des IA battues, série de jours, export/import.
+- Inscription en 4 étapes (pseudo, emblème avec aperçu 3D, niveau, validation) suivie d'une animation de bienvenue en 3D. Le profil reste dans le navigateur, sans mot de passe ni e-mail.
+- Profil : Elo contre l'IA, historique, échelle des IA battues, série de jours, export/import.
+- Mentions légales, politique de confidentialité et gestion des cookies (mesure d'audience anonyme uniquement après consentement). Les informations de l'éditeur sont dans `src/data/legal.ts`.
 
 ## Stack
 

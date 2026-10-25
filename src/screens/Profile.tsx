@@ -4,7 +4,8 @@ import { Activity, Crown, Download, Pencil, Trash2, Upload } from 'lucide-react'
 import { useProfile } from '../store/profile';
 import { BOTS } from '../lib/engine/bots';
 import { navigate } from '../lib/router';
-import { BotAvatar, UserAvatar, hueFromName } from '../components/BotAvatar';
+import { BotAvatar, ProfileAvatar } from '../components/BotAvatar';
+import { LEVELS } from '../store/profile';
 import { RatingChart } from '../components/RatingChart';
 import { Modal } from '../components/ui/Modal';
 import { REASON_LABEL } from '../game/line';
@@ -73,7 +74,7 @@ export function Profile() {
   return (
     <div className="container profile">
       <section className="profile-head panel">
-        <UserAvatar name={p.name || '?'} hue={hueFromName(p.name)} size={76} />
+        <ProfileAvatar glyph={p.avatar.glyph} hue={p.avatar.hue} size={76} />
         <div className="profile-id">
           {editing ? (
             <form
@@ -97,7 +98,9 @@ export function Profile() {
             </h1>
           )}
           <p className="dim">
+            {p.level ? `${LEVELS[p.level].label} · ` : ''}
             {stats.w} victoires · {stats.d} nulles · {stats.l} défaites · série de {p.dailyStreak.count} jour{p.dailyStreak.count > 1 ? 's' : ''}
+            {p.registeredAt ? ` · membre depuis le ${new Date(p.registeredAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}` : ''}
           </p>
         </div>
         <dl className="profile-kpis">
@@ -224,7 +227,7 @@ export function Profile() {
       </section>
 
       <Modal open={resetOpen} onClose={() => setResetOpen(false)} title="Effacer le profil ?" width={400}>
-        <p className="dim">Classements, historique, puzzles et progression des cours seront supprimés de ce navigateur.</p>
+        <p className="dim">Profil, classements, historique, puzzles et progression des cours seront supprimés de ce navigateur. Tu repasseras par l’inscription.</p>
         <div className="controls-row" style={{ marginTop: 18 }}>
           <button className="btn grow" onClick={() => setResetOpen(false)}>
             Annuler
@@ -232,9 +235,7 @@ export function Profile() {
           <button
             className="btn danger grow"
             onClick={() => {
-              const keepName = p.name;
               p.reset();
-              p.setName(keepName);
               setResetOpen(false);
               toast('Profil réinitialisé');
             }}
