@@ -17,7 +17,7 @@ import { GameOverModal } from '../components/game/GameOverModal';
 import { EvalBar } from '../components/EvalBar';
 import { MoveList } from '../components/MoveList';
 import { CapturedRow, PlayerStrip } from '../components/PlayerStrip';
-import { BotAvatar, UserAvatar, hueFromName } from '../components/BotAvatar';
+import { BotAvatar, ProfileAvatar, UserAvatar, hueFromName } from '../components/BotAvatar';
 import { Modal } from '../components/ui/Modal';
 import { toast } from '../components/Toasts';
 import type { Arrow } from '../components/board/Board';
@@ -36,6 +36,7 @@ export function GameScreen() {
 function OfflineGameView({ session }: { session: OfflineSession }) {
   const rematch = useSession((s) => s.rematch);
   const rating = useProfile((s) => s.rating);
+  const avatar = useProfile((s) => s.avatar);
   const { view3d, set: setSettings } = useSettings();
   const bot = session.mode === 'bot' ? getBot(session.botId) : undefined;
   const config = useMemo(
@@ -79,7 +80,7 @@ function OfflineGameView({ session }: { session: OfflineSession }) {
     const adv = color === 'white' ? captured.diff : -captured.diff;
     return (
       <PlayerStrip
-        avatar={isBot ? <BotAvatar bot={bot} /> : <UserAvatar name={session.mode === 'local' ? (color === 'white' ? 'B' : 'N') : name} hue={hueFromName(name)} />}
+        avatar={isBot ? <BotAvatar bot={bot} /> : session.mode === 'bot' ? <ProfileAvatar glyph={avatar.glyph} hue={avatar.hue} /> : <UserAvatar name={color === 'white' ? 'B' : 'N'} hue={hueFromName(name)} />}
         name={name}
         rating={isBot ? bot.elo : session.mode === 'bot' ? rating : undefined}
         captured={<CapturedRow pieces={caps} color={color === 'white' ? 'b' : 'w'} advantage={adv} />}
