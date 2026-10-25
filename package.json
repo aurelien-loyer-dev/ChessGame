@@ -3,15 +3,44 @@
   "private": true,
   "version": "2.0.0",
   "type": "module",
-  "workspaces": ["packages/*", "apps/*"],
   "scripts": {
-    "dev": "npm run dev -w @chess/server & npm run dev -w @chess/web",
-    "dev:web": "npm run dev -w @chess/web",
-    "dev:server": "npm run dev -w @chess/server",
-    "build": "npm run build -w @chess/web",
-    "start": "npm run start -w @chess/server",
-    "test": "npm run test --workspaces --if-present",
-    "typecheck": "npm run typecheck --workspaces --if-present"
+    "postinstall": "node scripts/copy-engine.mjs",
+    "predev": "node scripts/copy-engine.mjs",
+    "dev": "vite",
+    "prebuild": "node scripts/copy-engine.mjs",
+    "build": "tsc --noEmit -p . && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p .",
+    "test": "vitest run"
   },
-  "engines": { "node": ">=20" }
+  "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@fontsource-variable/oxanium": "^5.3.0",
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
+    "@vercel/analytics": "^2.0.1",
+    "chess.js": "^1.4.0",
+    "lucide-react": "^1.61.0",
+    "motion": "^14.6.0",
+    "peerjs": "^1.5.5",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "three": "^0.186.1",
+    "zustand": "^5.0.16"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.186.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "stockfish": "^19.0.1",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  },
+  "engines": {
+    "node": ">=20"
+  }
 }

@@ -2,7 +2,6 @@ node_modules/
 dist/
 .env
 .env.local
-apps/web/public/engine/
-apps/server/data/
+public/engine/
 *.log
 .DS_Store
