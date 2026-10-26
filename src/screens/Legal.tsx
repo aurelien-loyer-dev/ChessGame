@@ -179,7 +179,7 @@ function Privacy() {
       <section>
         <h2>Durée de conservation</h2>
         <p>
-          Les données locales restent dans ton navigateur jusqu’à ce que tu les effaces (bouton « Réinitialiser » de la page Profil, ou effacement des
+          Les données locales restent dans ton navigateur jusqu’à ce que tu les effaces (bouton « Supprimer toutes mes données » de la page Profil, ou effacement des
           données du site). Les journaux de l’hébergeur sont conservés selon sa propre politique.
         </p>
       </section>
