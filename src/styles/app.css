@@ -416,3 +416,12 @@
 .cloud-btn svg { width: 20px; height: 20px; }
 .cloud-buttons.compact .cloud-btn { flex: 1; min-width: 120px; min-height: 40px; }
 .logout-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+
+.guest-gate { max-width: 560px; margin: 40px auto 0; padding: 32px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; }
+.guest-gate h1 { font-size: 26px; }
+.gate-icon { width: 56px; height: 56px; display: grid; place-items: center; border-radius: 16px; background: rgb(var(--brass-rgb) / 0.1); border: 1px solid rgb(var(--brass-rgb) / 0.35); color: var(--brass); }
+.gate-icon svg { width: 26px; height: 26px; }
+.rail-item .lock { position: absolute; top: 6px; right: 12px; width: 11px; height: 11px; color: var(--text-faint); }
+.rail-account { display: flex; flex-direction: column; align-items: center; gap: 2px; border: 0; background: none; cursor: pointer; color: var(--brass); font-size: 10px; font-weight: 700; padding: 4px 0; }
+.rail-account svg { width: 18px; height: 18px; }
+.app-splash { position: fixed; inset: 0; z-index: 160; display: grid; place-items: center; background: var(--bg); }

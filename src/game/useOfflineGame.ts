@@ -7,6 +7,7 @@ import { lineToCp } from '../lib/engine/eval';
 import { START_FEN, type PieceSymbol, type Square } from '../lib/chess';
 import { play, playMoveSound } from '../lib/sound';
 import { useProfile } from '../store/profile';
+import { useCloud } from '../store/cloud';
 import { applyMove, detectEnd, positionAt, type PlayedMove } from './line';
 
 export interface OfflineConfig {
@@ -70,7 +71,12 @@ export function useOfflineGame(config: OfflineConfig) {
       setOutcome((prev) => {
         if (prev) return prev;
         const you = config.mode === 'bot' ? config.color : null;
-        const ratingChange = recordGame({
+        const { enabled, guest, user } = useCloud.getState();
+        const isGuest = enabled && guest && !user;
+        // Guests play freely but nothing is recorded: no rating, no history.
+        const ratingChange = isGuest
+          ? null
+          : recordGame({
           id: gameId.current,
           date: Date.now(),
           mode: config.mode,

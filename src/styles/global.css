@@ -38,6 +38,8 @@
   color-scheme: dark;
 }
 
+[hidden] { display: none !important; }
+
 *,
 *::before,
 *::after { box-sizing: border-box; }

@@ -12,6 +12,7 @@ import { BotAvatar } from '../components/BotAvatar';
 import { PIECE_IMG } from '../components/board/pieces';
 import { validateFen } from '../lib/chess';
 import { toast } from '../components/Toasts';
+import { GuestGate } from '../components/GuestGate';
 import './play.css';
 
 const TABS = [
@@ -49,7 +50,11 @@ export function PlaySetup({ tab = 'bot', code }: { tab?: string; code?: string }
           transition={{ duration: 0.2 }}
         >
           {current === 'bot' && <BotSetup />}
-          {current === 'online' && <OnlineSetup code={code} />}
+          {current === 'online' && (
+            <GuestGate feature="Le jeu en ligne" compact>
+              <OnlineSetup code={code} />
+            </GuestGate>
+          )}
           {current === 'local' && <LocalSetup />}
         </motion.div>
       </AnimatePresence>

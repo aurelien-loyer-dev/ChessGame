@@ -120,3 +120,6 @@
 @media (max-width: 560px) {
   .home-grid { grid-template-columns: 1fr; }
 }
+.guest-banner { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 12px 14px; border-radius: 12px; border: 1px solid rgb(var(--brass-rgb) / 0.35); background: rgb(var(--brass-rgb) / 0.07); font-size: 14px; color: var(--text-dim); max-width: 60ch; }
+.guest-banner b { color: var(--brass); }
+.guest-banner span { flex: 1; min-width: 220px; }

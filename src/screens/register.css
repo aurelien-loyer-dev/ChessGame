@@ -166,3 +166,22 @@
 .register.restoring { display: grid; place-items: center; grid-template-columns: 1fr; }
 .restore-card { display: flex; align-items: center; gap: 14px; padding: 20px 24px; font-weight: 600; }
 .spin-ring { width: 22px; height: 22px; border-radius: 50%; border: 3px solid var(--surface-3); border-top-color: var(--accent); animation: spin 0.9s linear infinite; }
+
+.auth-brand { position: absolute; left: max(36px, env(safe-area-inset-left)); bottom: 40px; max-width: 420px; display: flex; flex-direction: column; gap: 8px; }
+.auth-brand h2 { font-size: clamp(24px, 3vw, 34px); text-shadow: 0 4px 30px rgb(0 0 0 / 0.8); }
+.auth-body { display: flex; flex-direction: column; gap: 14px; }
+.auth-body h1 { font-size: clamp(26px, 3vw, 34px); }
+.auth-tabs { align-self: flex-start; }
+.auth-form { display: flex; flex-direction: column; gap: 12px; }
+.field-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.link-btn { border: 0; background: none; padding: 0; color: var(--accent); font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.link-btn:hover { text-decoration: underline; }
+.pw-wrap { position: relative; display: block; }
+.pw-wrap .input { padding-right: 44px; }
+.pw-toggle { position: absolute; right: 6px; top: 50%; translate: 0 -50%; width: 32px; height: 32px; display: grid; place-items: center; border: 0; background: none; color: var(--text-faint); cursor: pointer; border-radius: 8px; }
+.pw-toggle:hover { color: var(--text); background: var(--surface-3); }
+.pw-toggle svg { width: 18px; height: 18px; }
+.guest-box { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; padding-top: 16px; border-top: 1px solid var(--line); text-align: center; }
+.auth-done { align-items: flex-start; }
+.auth-mail { width: 44px; height: 44px; color: var(--accent); }
+@media (max-width: 900px) { .auth-brand { display: none; } }

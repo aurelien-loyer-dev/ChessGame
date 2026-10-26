@@ -24,7 +24,8 @@ Jeu d'échecs complet qui tourne entièrement dans le navigateur : IA calibrées
 - Plateau 2D : glisser-déposer ou clic, animations, flèches au clic droit, promotion visuelle, 4 thèmes.
 - Sons synthétisés, raccourcis clavier (`←` `→` `F`), responsive mobile.
 - Inscription en 4 étapes (pseudo, emblème avec aperçu 3D, niveau, validation) suivie d'une animation de bienvenue en 3D.
-- Comptes en ligne facultatifs : connexion avec GitHub ou Google, sauvegarde automatique du profil et reconnexion sur n'importe quel appareil (Supabase). Sans configuration, le profil reste local au navigateur.
+- Comptes : inscription et connexion par e-mail et mot de passe (confirmation d'adresse, mot de passe oublié) ou avec GitHub / Google, sauvegarde automatique du profil et reconnexion sur n'importe quel appareil (Supabase).
+- Mode invité : jouer contre l'IA, en local et analyser une partie sans compte ; cours, puzzles, jeu en ligne et profil demandent un compte. Sans configuration Supabase, l'app reste entièrement locale.
 - Déconnexion, export/import et suppression des données (RGPD).
 - Profil : Elo contre l'IA, historique, échelle des IA battues, série de jours, export/import.
 - Mentions légales, politique de confidentialité et gestion des cookies (mesure d'audience anonyme uniquement après consentement). Les informations de l'éditeur sont dans `src/data/legal.ts`.
@@ -58,19 +59,20 @@ npm test
 
 Le jeu en ligne utilise par défaut le service public gratuit de PeerJS pour mettre les deux navigateurs en relation. Pour utiliser ton propre broker : `VITE_PEER_HOST`, `VITE_PEER_PORT`, `VITE_PEER_PATH`, `VITE_PEER_SECURE`.
 
-## Comptes en ligne (facultatif)
+## Comptes (Supabase)
 
-Les sauvegardes et la connexion GitHub / Google passent par [Supabase](https://supabase.com) (offre gratuite suffisante). Aucun serveur à héberger.
+Les comptes (e-mail + mot de passe, GitHub, Google) et les sauvegardes passent par [Supabase](https://supabase.com) (offre gratuite suffisante). Aucun serveur à héberger.
 
 1. Crée un projet Supabase, de préférence dans une région européenne (Francfort ou Paris).
 2. **SQL Editor** : exécute `supabase/migrations/0001_cloud_saves.sql` (table `saves` protégée par RLS + fonction de suppression de compte).
 3. **Authentication → URL Configuration** : *Site URL* = l'URL de ton site (ex. `https://chess-arena.vercel.app`), et ajoute-la aussi dans *Redirect URLs* avec `http://localhost:5173` pour le développement.
-4. **Authentication → Providers**, active ceux que tu veux. Pour chacun, l'URL de callback à déclarer chez le fournisseur est `https://<ton-projet>.supabase.co/auth/v1/callback`.
+4. **Authentication → Providers → Email** : laisse-le activé avec *Confirm email*. Pour la production, configure un SMTP (**Authentication → Emails → SMTP Settings**) : l'envoi intégré de Supabase est limité à quelques e-mails par heure. Tu peux traduire les modèles d'e-mails en français dans **Authentication → Emails → Templates**.
+5. **Authentication → Providers**, active aussi GitHub et/ou Google. Pour chacun, l'URL de callback à déclarer chez le fournisseur est `https://<ton-projet>.supabase.co/auth/v1/callback`.
    - **GitHub** : GitHub → Settings → Developer settings → OAuth Apps → New OAuth App, puis copie Client ID et Client secret dans Supabase.
    - **Google** : Google Cloud Console → APIs & Services → Credentials → OAuth client ID (type Web), puis copie l'ID et le secret.
-5. **Settings → API** : copie l'URL du projet et la clé `anon` dans les variables d'environnement Vercel (voir `.env.example`) :
+6. **Settings → API** : copie l'URL du projet et la clé `anon` dans les variables d'environnement Vercel (voir `.env.example`) :
    `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` (et `VITE_AUTH_PROVIDERS=github` pour n'afficher que GitHub).
-6. Redéploie. Les boutons de connexion apparaissent à l'inscription et dans le profil.
+7. Redéploie. L'écran de connexion apparaît à l'ouverture du site, avec l'option « Jouer en invité ».
 
 **Sécurité** : `VITE_SUPABASE_URL` et la clé `anon` sont intégrées au JavaScript du site, c'est voulu. La protection repose sur la RLS de la migration : sans connexion, aucun accès à la table ; connecté, chaque joueur ne peut lire, écrire ou supprimer que sa propre ligne, et la date de sauvegarde est fixée par le serveur. Ne mets jamais la clé `service_role` dans une variable `VITE_`. Après la migration, l'onglet **Advisors → Security** de Supabase ne doit signaler aucune alerte sur `saves`.
 

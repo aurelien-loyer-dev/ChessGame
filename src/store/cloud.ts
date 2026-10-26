@@ -77,6 +77,10 @@ interface CloudState {
   lastSyncedAt: number | null;
   /** Cloud save that conflicts with local changes, waiting for the player's choice. */
   conflict: CloudSave | null;
+  /** The player opened a password-reset link and must choose a new password. */
+  recovering: boolean;
+  /** Playing without an account: progress is not saved and some features are locked. */
+  guest: boolean;
 
   init: () => void;
   signIn: (provider: Provider) => Promise<void>;
@@ -84,6 +88,18 @@ interface CloudState {
   syncNow: () => Promise<void>;
   resolveConflict: (keep: 'cloud' | 'local') => Promise<void>;
   deleteAccount: () => Promise<void>;
+  setGuest: (guest: boolean) => void;
+  finishRecovery: () => void;
+}
+
+const GUEST_KEY = 'arena.guest';
+
+function readGuest(): boolean {
+  try {
+    return sessionStorage.getItem(GUEST_KEY) === '1';
+  } catch {
+    return false;
+  }
 }
 
 let started = false;
@@ -149,13 +165,29 @@ export const useCloud = create<CloudState>()((set, get) => {
     error: null,
     lastSyncedAt: readMeta().lastSyncedAt,
     conflict: null,
+    recovering: false,
+    guest: readGuest(),
+
+    setGuest: (guest) => {
+      try {
+        if (guest) sessionStorage.setItem(GUEST_KEY, '1');
+        else sessionStorage.removeItem(GUEST_KEY);
+      } catch {
+        // Guest mode then lasts until the page closes.
+      }
+      set({ guest });
+    },
+
+    finishRecovery: () => set({ recovering: false }),
 
     init: () => {
       if (!CLOUD_ENABLED || started) return;
       started = true;
       useProfile.subscribe(markDirty);
       useSettings.subscribe(markDirty);
-      watchAuth((user) => {
+      watchAuth((user, event) => {
+        if (event === 'PASSWORD_RECOVERY') set({ recovering: true });
+        if (user) get().setGuest(false);
         set({ user });
         if (user) reconcileOnce(user);
         else reconciledFor = null;

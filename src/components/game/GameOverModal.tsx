@@ -29,7 +29,7 @@ export function GameOverModal({
   onRematch?: () => void;
   rematchLabel?: string;
   rematchPending?: boolean;
-  onAnalyse: () => void;
+  onAnalyse?: () => void;
   onNew: () => void;
 }) {
   const winner: Color | null = result === '1-0' ? 'white' : result === '0-1' ? 'black' : null;
@@ -63,9 +63,11 @@ export function GameOverModal({
           </motion.p>
         )}
         <div className="gameover-actions">
-          <button className="btn primary block" onClick={onAnalyse}>
-            <Activity /> Analyser la partie
-          </button>
+          {onAnalyse && (
+            <button className="btn primary block" onClick={onAnalyse}>
+              <Activity /> Analyser la partie
+            </button>
+          )}
           <div className="controls-row">
             {onRematch && (
               <button className="btn grow" onClick={onRematch} disabled={rematchPending}>
