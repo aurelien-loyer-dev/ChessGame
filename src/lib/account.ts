@@ -1,4 +1,5 @@
 import { useOnline } from '../online/store';
+import { useCloud } from '../store/cloud';
 
 /**
  * Account actions for a profile that only lives in this browser:
@@ -78,9 +79,10 @@ function leaveOnline() {
   }
 }
 
-/** Removes the profile from this device and returns to the sign-up screen. */
-export function signOut() {
+/** Removes the profile from this device (saving it online first when signed in) and returns to the sign-up screen. */
+export async function signOut() {
   leaveOnline();
+  await useCloud.getState().signOut().catch(() => undefined);
   try {
     for (const k of ACCOUNT_KEYS) localStorage.removeItem(k);
   } catch {
@@ -90,9 +92,10 @@ export function signOut() {
   location.reload();
 }
 
-/** Erases every piece of data the app keeps in this browser (GDPR erasure). */
-export function eraseEverything() {
+/** Erases every piece of data the app keeps in this browser (GDPR erasure). The online account is deleted separately. */
+export async function eraseEverything() {
   leaveOnline();
+  await useCloud.getState().signOut().catch(() => undefined);
   try {
     for (const k of appKeys()) localStorage.removeItem(k);
     sessionStorage.clear();

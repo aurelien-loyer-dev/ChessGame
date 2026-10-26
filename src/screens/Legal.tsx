@@ -112,8 +112,9 @@ function Privacy() {
       <section>
         <h2>En bref</h2>
         <p>
-          Chess Arena n’a pas de serveur de comptes. Ton profil (pseudo, emblème, niveau, classements, historique des parties, progression des
-          cours et puzzles, réglages) est enregistré uniquement dans le stockage local de ton navigateur. L’éditeur n’y a pas accès.
+          Par défaut, ton profil (pseudo, emblème, niveau, classements, historique des parties, progression des cours et puzzles, réglages) est
+          enregistré uniquement dans le stockage local de ton navigateur. Si tu te connectes avec GitHub ou Google, une copie de ce profil est
+          sauvegardée en ligne pour que tu le retrouves sur tes autres appareils.
         </p>
       </section>
       <section>
@@ -139,6 +140,12 @@ function Privacy() {
               <td>Ton navigateur uniquement</td>
               <td>Faire fonctionner le jeu</td>
               <td>Exécution du service</td>
+            </tr>
+            <tr>
+              <td>Compte en ligne (facultatif) : identifiant, e-mail, nom et photo fournis par GitHub ou Google, et sauvegarde du profil</td>
+              <td>Supabase (base de données hébergée dans l’Union européenne)</td>
+              <td>Te connecter et synchroniser ton profil entre tes appareils</td>
+              <td>Exécution du service, à ta demande</td>
             </tr>
             <tr>
               <td>Adresse IP et pseudo lors d’une partie en ligne</td>
@@ -170,9 +177,17 @@ function Privacy() {
         </p>
       </section>
       <section>
+        <h2>Compte en ligne</h2>
+        <p>
+          La connexion passe par GitHub ou Google : Chess Arena ne voit jamais ton mot de passe et ne reçoit que les informations de base
+          de ton compte (identifiant, e-mail, nom, photo). Les comptes et les sauvegardes sont gérés par Supabase Inc., sous-traitant de l’éditeur.
+          Chaque sauvegarde n’est lisible que par son propriétaire. Tu peux supprimer ton compte en ligne à tout moment depuis la page Profil.
+        </p>
+      </section>
+      <section>
         <h2>Transferts hors de l’Union européenne</h2>
         <p>
-          L’hébergeur {HOST.name} est établi aux États-Unis. Les transferts sont encadrés par le Data Privacy Framework UE-États-Unis et les clauses
+          L’hébergeur {HOST.name} et Supabase Inc. sont établis aux États-Unis. Les transferts sont encadrés par le Data Privacy Framework UE-États-Unis et les clauses
           contractuelles types de la Commission européenne.
         </p>
       </section>
@@ -180,7 +195,8 @@ function Privacy() {
         <h2>Durée de conservation</h2>
         <p>
           Les données locales restent dans ton navigateur jusqu’à ce que tu les effaces (bouton « Supprimer toutes mes données » de la page Profil, ou effacement des
-          données du site). Les journaux de l’hébergeur sont conservés selon sa propre politique.
+          données du site). Le compte et la sauvegarde en ligne sont conservés tant que tu ne les supprimes pas (bouton « Supprimer mon compte en
+          ligne »). Les journaux de l’hébergeur sont conservés selon sa propre politique.
         </p>
       </section>
       <section>
@@ -193,7 +209,7 @@ function Privacy() {
           <li><b>Accès et portabilité</b> : « Télécharger mes données » produit un fichier JSON complet et lisible.</li>
           <li><b>Rectification</b> : modifie ton pseudo depuis le profil.</li>
           <li><b>Déconnexion</b> : « Se déconnecter » retire ton profil de cet appareil, avec la possibilité de l’exporter avant.</li>
-          <li><b>Effacement</b> : « Supprimer toutes mes données » efface définitivement profil, parties, réglages et choix cookies.</li>
+          <li><b>Effacement</b> : « Supprimer toutes mes données » efface définitivement profil, parties, réglages et choix cookies de cet appareil, et « Supprimer mon compte en ligne » efface le compte et la sauvegarde en ligne.</li>
         </ul>
         <p>
           Pour toute autre demande, contacte l’éditeur : <Contact />. Tu peux aussi adresser une réclamation à la CNIL (cnil.fr).
@@ -233,6 +249,11 @@ function Cookies() {
               <td className="mono">arena.session</td>
               <td>Dernière partie et choix de l’écran Jouer</td>
               <td>Non requis</td>
+            </tr>
+            <tr>
+              <td className="mono">arena.cloud-auth, arena.cloud</td>
+              <td>Session de connexion au compte en ligne et suivi de la synchronisation</td>
+              <td>Non requis (uniquement si tu te connectes)</td>
             </tr>
             <tr>
               <td className="mono">arena.consent</td>

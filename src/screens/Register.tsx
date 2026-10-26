@@ -2,6 +2,8 @@ import { lazy, Suspense, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ArrowLeft, ArrowRight, Check, GraduationCap, Sparkles, Swords, Upload } from 'lucide-react';
 import { importAccount } from '../lib/account';
+import { useCloud } from '../store/cloud';
+import { CloudButtons } from '../components/CloudButtons';
 import { NAME_MAX, sanitizeName } from '../lib/types';
 import { LEVELS, useProfile, type PlayerLevel } from '../store/profile';
 import { getBot } from '../lib/engine/bots';
@@ -19,9 +21,10 @@ const STEPS = ['Pseudo', 'Avatar', 'Niveau', 'Validation'] as const;
 /** Full-screen sign-up: four steps beside a live 3D preview of the avatar, then a 3D welcome sequence. */
 export function Register() {
   const profile = useProfile();
+  const cloud = useCloud();
   const [step, setStep] = useState(0);
   const [dir, setDir] = useState(1);
-  const [name, setName] = useState(profile.name);
+  const [name, setName] = useState(profile.name || sanitizeName(cloud.user?.name ?? ''));
   const [glyph, setGlyph] = useState(profile.avatar.glyph);
   const [hue, setHue] = useState(profile.avatar.hue);
   const [level, setLevel] = useState<PlayerLevel | null>(profile.level);
@@ -43,6 +46,18 @@ export function Register() {
     setWelcome(true);
     play('success');
   };
+
+  // Returning player: their save is being restored, the page reloads when it is ready.
+  if (cloud.user && cloud.status === 'syncing') {
+    return (
+      <div className="register restoring">
+        <div className="restore-card panel">
+          <span className="spin-ring" aria-hidden />
+          <p>Récupération de ta sauvegarde…</p>
+        </div>
+      </div>
+    );
+  }
 
   if (welcome && level) {
     return <Welcome name={clean} glyph={glyph} hue={hue} level={level} onDone={() => profile.register({ name: clean, avatar: { glyph, hue }, level })} />;
@@ -99,7 +114,23 @@ export function Register() {
             >
               {step === 0 && (
                 <>
-                  <h1>Comment doit-on t’appeler ?</h1>
+                  {cloud.enabled && !cloud.user && (
+                    <div className="register-cloud">
+                      <h1>Connecte-toi</h1>
+                      <p className="dim">Ton profil est sauvegardé en ligne et tu le retrouves sur tous tes appareils.</p>
+                      <CloudButtons />
+                      <div className="or-sep">
+                        <span>ou crée un profil sur cet appareil</span>
+                      </div>
+                    </div>
+                  )}
+                  {cloud.user && (
+                    <p className="cloud-connected">
+                      {cloud.user.avatarUrl && <img src={cloud.user.avatarUrl} alt="" />}
+                      Connecté{cloud.user.email ? ` : ${cloud.user.email}` : ''}. Choisis ton pseudo pour terminer.
+                    </p>
+                  )}
+                  <h1>{cloud.enabled && !cloud.user ? 'Ton pseudo' : 'Comment doit-on t’appeler ?'}</h1>
                   <p className="dim">Ton pseudo s’affiche en partie, dans tes parties en ligne et sur ton profil.</p>
                   <label className="field">
                     <span>Pseudo</span>

@@ -160,3 +160,9 @@
 .import-link { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; font-size: 13px; font-weight: 600; color: var(--accent); cursor: pointer; }
 .import-link svg { width: 15px; height: 15px; }
 .import-link:hover { text-decoration: underline; }
+.register-cloud { display: flex; flex-direction: column; gap: 14px; }
+.cloud-connected { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; background: rgb(var(--good-rgb) / 0.08); border: 1px solid rgb(var(--good-rgb) / 0.3); font-size: 13.5px; }
+.cloud-connected img { width: 26px; height: 26px; border-radius: 50%; }
+.register.restoring { display: grid; place-items: center; grid-template-columns: 1fr; }
+.restore-card { display: flex; align-items: center; gap: 14px; padding: 20px 24px; font-weight: 600; }
+.spin-ring { width: 22px; height: 22px; border-radius: 50%; border: 3px solid var(--surface-3); border-top-color: var(--accent); animation: spin 0.9s linear infinite; }

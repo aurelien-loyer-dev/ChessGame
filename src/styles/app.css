@@ -409,3 +409,10 @@
 .puzzle-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
 .puzzle-top .home-btn { margin-left: -10px; }
 .game-head { flex-wrap: wrap; }
+
+.cloud-buttons { display: flex; flex-direction: column; gap: 8px; }
+.cloud-buttons.compact { flex-direction: row; flex-wrap: wrap; }
+.cloud-btn { justify-content: center; min-height: 46px; gap: 10px; background: var(--surface-2); }
+.cloud-btn svg { width: 20px; height: 20px; }
+.cloud-buttons.compact .cloud-btn { flex: 1; min-width: 120px; min-height: 40px; }
+.logout-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
