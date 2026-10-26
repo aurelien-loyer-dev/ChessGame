@@ -19,17 +19,9 @@ const ICONS: Record<string, React.ReactNode> = {
       <path fill="#EA4335" d="M12 4.75c1.76 0 3.34.61 4.59 1.8l3.44-3.44A11.97 11.97 0 0 0 1.28 6.61l4.01 3.1C6.23 6.86 8.88 4.75 12 4.75Z" />
     </svg>
   ),
-  apple: (
-    <svg viewBox="0 0 24 24" aria-hidden>
-      <path
-        fill="currentColor"
-        d="M16.37 12.7c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.09-2.01-3.76-2.04-1.6-.16-3.12.94-3.93.94-.81 0-2.06-.92-3.39-.89-1.74.03-3.35 1.01-4.25 2.57-1.81 3.14-.46 7.79 1.3 10.34.86 1.25 1.89 2.65 3.24 2.6 1.3-.05 1.79-.84 3.36-.84s2.01.84 3.38.81c1.4-.02 2.28-1.27 3.13-2.53.99-1.45 1.4-2.85 1.42-2.92-.03-.01-2.72-1.04-2.75-4.13ZM13.8 5.06c.72-.87 1.2-2.07 1.07-3.27-1.03.04-2.28.69-3.02 1.55-.66.77-1.24 2-1.09 3.18 1.15.09 2.32-.58 3.04-1.46Z"
-      />
-    </svg>
-  ),
 };
 
-/** "Continuer avec GitHub / Google / Apple" buttons; render nothing when cloud accounts are not configured. */
+/** "Continuer avec GitHub / Google" buttons; render nothing when cloud accounts are not configured. */
 export function CloudButtons({ compact = false }: { compact?: boolean }) {
   const { enabled, signIn, error } = useCloud();
   if (!enabled || !PROVIDERS.length) return null;

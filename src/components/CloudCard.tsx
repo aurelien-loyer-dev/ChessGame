@@ -5,7 +5,7 @@ import { CloudButtons } from './CloudButtons';
 import { Modal } from './ui/Modal';
 import { toast } from './Toasts';
 
-const PROVIDER_LABEL: Record<string, string> = { github: 'GitHub', google: 'Google', apple: 'Apple' };
+const PROVIDER_LABEL: Record<string, string> = { github: 'GitHub', google: 'Google' };
 
 function ago(ts: number | null) {
   if (!ts) return 'jamais';

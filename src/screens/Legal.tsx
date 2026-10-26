@@ -113,7 +113,7 @@ function Privacy() {
         <h2>En bref</h2>
         <p>
           Par défaut, ton profil (pseudo, emblème, niveau, classements, historique des parties, progression des cours et puzzles, réglages) est
-          enregistré uniquement dans le stockage local de ton navigateur. Si tu te connectes avec GitHub, Google ou Apple, une copie de ce profil est
+          enregistré uniquement dans le stockage local de ton navigateur. Si tu te connectes avec GitHub ou Google, une copie de ce profil est
           sauvegardée en ligne pour que tu le retrouves sur tes autres appareils.
         </p>
       </section>
@@ -142,7 +142,7 @@ function Privacy() {
               <td>Exécution du service</td>
             </tr>
             <tr>
-              <td>Compte en ligne (facultatif) : identifiant, e-mail, nom et photo fournis par GitHub, Google ou Apple, et sauvegarde du profil</td>
+              <td>Compte en ligne (facultatif) : identifiant, e-mail, nom et photo fournis par GitHub ou Google, et sauvegarde du profil</td>
               <td>Supabase (base de données hébergée dans l’Union européenne)</td>
               <td>Te connecter et synchroniser ton profil entre tes appareils</td>
               <td>Exécution du service, à ta demande</td>
@@ -179,7 +179,7 @@ function Privacy() {
       <section>
         <h2>Compte en ligne</h2>
         <p>
-          La connexion passe par GitHub, Google ou Apple : Chess Arena ne voit jamais ton mot de passe et ne reçoit que les informations de base
+          La connexion passe par GitHub ou Google : Chess Arena ne voit jamais ton mot de passe et ne reçoit que les informations de base
           de ton compte (identifiant, e-mail, nom, photo). Les comptes et les sauvegardes sont gérés par Supabase Inc., sous-traitant de l’éditeur.
           Chaque sauvegarde n’est lisible que par son propriétaire. Tu peux supprimer ton compte en ligne à tout moment depuis la page Profil.
         </p>

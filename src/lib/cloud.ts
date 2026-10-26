@@ -1,8 +1,8 @@
 import type { Provider, SupabaseClient, User } from '@supabase/supabase-js';
 
 /**
- * Optional cloud accounts (Supabase): OAuth sign-in with GitHub, Google or
- * Apple, and one JSON save per player. Without the two env variables the
+ * Optional cloud accounts (Supabase): OAuth sign-in with GitHub or Google, and
+ * one JSON save per player. Without the two env variables the
  * whole feature stays hidden and the app works offline as before.
  */
 
@@ -11,11 +11,11 @@ const KEY = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim();
 
 export const CLOUD_ENABLED = !!(URL && KEY);
 
-export const PROVIDERS: { id: Provider; label: string }[] = (import.meta.env.VITE_AUTH_PROVIDERS ?? 'github,google,apple')
+export const PROVIDERS: { id: Provider; label: string }[] = (import.meta.env.VITE_AUTH_PROVIDERS ?? 'github,google')
   .split(',')
   .map((p) => p.trim())
-  .filter((p): p is 'github' | 'google' | 'apple' => p === 'github' || p === 'google' || p === 'apple')
-  .map((id) => ({ id, label: { github: 'GitHub', google: 'Google', apple: 'Apple' }[id] }));
+  .filter((p): p is 'github' | 'google' => p === 'github' || p === 'google')
+  .map((id) => ({ id, label: { github: 'GitHub', google: 'Google' }[id] }));
 
 /** Local keys that travel with a cloud save. Consent and session stay per device. */
 export const SAVED_KEYS = ['arena.profile', 'arena.settings'] as const;

@@ -415,6 +415,4 @@
 .cloud-btn { justify-content: center; min-height: 46px; gap: 10px; background: var(--surface-2); }
 .cloud-btn svg { width: 20px; height: 20px; }
 .cloud-buttons.compact .cloud-btn { flex: 1; min-width: 120px; min-height: 40px; }
-.cloud-btn.apple { background: #f5f7fa; color: #0b0f15; border-color: transparent; }
-.cloud-btn.apple:hover:not(:disabled) { border-color: transparent; filter: brightness(0.95); }
 .logout-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
