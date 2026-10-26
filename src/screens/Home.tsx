@@ -75,7 +75,7 @@ export function Home() {
             Stockfish 19 · {BOTS.length} adversaires de {BOTS[0].elo} à {BOTS[BOTS.length - 1].elo} Elo
           </motion.p>
           <motion.h1 variants={rise} className="hero-title">
-            Chess <span>Arena</span>
+            Epi<span>Chess</span>
           </motion.h1>
           <motion.p variants={rise} className="hero-lede">
             Affronte des IA calibrées, joue en ligne, suis des cours interactifs et décortique chaque partie avec un moteur de grand maître, directement dans le navigateur.
@@ -227,7 +227,7 @@ export function Home() {
       </motion.section>
 
       <footer className="site-footer">
-        <span>© {new Date().getFullYear()} {PUBLISHER.name} · Chess Arena</span>
+        <span>© {new Date().getFullYear()} {PUBLISHER.name} · EpiChess</span>
         <nav aria-label="Informations légales">
           <a href="#/legal/mentions">Mentions légales</a>
           <a href="#/legal/confidentialite">Confidentialité</a>

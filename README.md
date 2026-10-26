@@ -1,4 +1,4 @@
-# Chess Arena
+# EpiChess
 
 Jeu d'échecs complet qui tourne entièrement dans le navigateur : IA calibrées en Elo (Stockfish 19 en WebAssembly), parties en ligne entre amis, cours interactifs, puzzles, analyse de parties et plateau 3D. Aucun serveur à héberger : c'est un site statique (Vercel, Netlify, GitHub Pages…).
 
@@ -65,7 +65,7 @@ Les comptes (e-mail + mot de passe, GitHub, Google) et les sauvegardes passent p
 
 1. Crée un projet Supabase, de préférence dans une région européenne (Francfort ou Paris).
 2. **SQL Editor** : exécute `supabase/migrations/0001_cloud_saves.sql` (table `saves` protégée par RLS + fonction de suppression de compte).
-3. **Authentication → URL Configuration** : *Site URL* = l'URL de ton site (ex. `https://chess-arena.vercel.app`), et ajoute-la aussi dans *Redirect URLs* avec `http://localhost:5173` pour le développement.
+3. **Authentication → URL Configuration** : *Site URL* = l'URL de ton site (ex. `https://epichess.vercel.app`), et ajoute-la aussi dans *Redirect URLs* avec `http://localhost:5173` pour le développement.
 4. **Authentication → Providers → Email** : laisse-le activé avec *Confirm email*. Pour la production, configure un SMTP (**Authentication → Emails → SMTP Settings**) : l'envoi intégré de Supabase est limité à quelques e-mails par heure. Tu peux traduire les modèles d'e-mails en français dans **Authentication → Emails → Templates**.
 5. **Authentication → Providers**, active aussi GitHub et/ou Google. Pour chacun, l'URL de callback à déclarer chez le fournisseur est `https://<ton-projet>.supabase.co/auth/v1/callback`.
    - **GitHub** : GitHub → Settings → Developer settings → OAuth Apps → New OAuth App, puis copie Client ID et Client secret dans Supabase.

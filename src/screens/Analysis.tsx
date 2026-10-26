@@ -502,7 +502,7 @@ function Workspace({ source, autoReview }: { source: Source; autoReview: boolean
               onClick={() => {
                 const a = document.createElement('a');
                 a.href = URL.createObjectURL(new Blob([pgn()], { type: 'application/x-chess-pgn' }));
-                a.download = `chess-arena-${new Date(source.date ?? Date.now()).toISOString().slice(0, 10)}.pgn`;
+                a.download = `epichess-${new Date(source.date ?? Date.now()).toISOString().slice(0, 10)}.pgn`;
                 a.click();
                 setTimeout(() => URL.revokeObjectURL(a.href), 1000);
               }}

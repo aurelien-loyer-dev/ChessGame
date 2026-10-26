@@ -1,4 +1,4 @@
--- Cloud saves for Chess Arena: one row per signed-in player, readable and
+-- Cloud saves for EpiChess: one row per signed-in player, readable and
 -- writable only by its owner (row level security).
 --
 -- The anon key and project URL ship in the frontend bundle by design; this

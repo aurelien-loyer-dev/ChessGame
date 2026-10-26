@@ -88,8 +88,8 @@ export function toPgn(opts: {
     }
   }
   const d = new Date(opts.date ?? Date.now());
-  chess.setHeader('Event', opts.event ?? 'Chess Arena');
-  chess.setHeader('Site', 'Chess Arena');
+  chess.setHeader('Event', opts.event ?? 'EpiChess');
+  chess.setHeader('Site', 'EpiChess');
   chess.setHeader('Date', `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`);
   chess.setHeader('White', opts.white);
   chess.setHeader('Black', opts.black);

@@ -13,7 +13,7 @@ import { applyMove, buildLine, detectEnd, type PlayedMove } from '../game/line';
  * guest after reconnects.
  */
 
-const ID_PREFIX = 'chess-arena-v2-';
+const ID_PREFIX = 'epichess-v1-';
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const ABANDON_MS = 60_000;
 /** Extra time before claiming a win on the opponent's clock, to absorb latency. */
