@@ -91,7 +91,7 @@ function today() {
 
 const initial = {
   name: '',
-  avatar: { glyph: '♞', hue: 200 } as Avatar,
+  avatar: { glyph: '♔', hue: 200 } as Avatar,
   level: null as PlayerLevel | null,
   registeredAt: null as number | null,
   rating: 1000,

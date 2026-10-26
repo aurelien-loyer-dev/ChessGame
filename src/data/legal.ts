@@ -19,4 +19,4 @@ export const HOST = {
   site: 'https://vercel.com',
 };
 
-export const LEGAL_UPDATED = '25 octobre 2026';
+export const LEGAL_UPDATED = '26 octobre 2026';

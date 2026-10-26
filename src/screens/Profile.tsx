@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import { Activity, Crown, Download, LogOut, Pencil, Trash2, Upload } from 'lucide-react';
 import { downloadAccount, eraseEverything, importAccount, signOut } from '../lib/account';
+import { CloudCard } from '../components/CloudCard';
 import { useProfile } from '../store/profile';
 import { BOTS } from '../lib/engine/bots';
 import { navigate } from '../lib/router';
@@ -203,6 +204,7 @@ export function Profile({ action }: { action?: string }) {
             te déconnecter ou tout effacer à tout moment. <a href="#/legal/confidentialite">Politique de confidentialité</a>
           </p>
         </div>
+        <CloudCard />
         <div className="account-actions">
           <button className="account-action" onClick={() => downloadAccount()}>
             <Download />
@@ -246,12 +248,12 @@ export function Profile({ action }: { action?: string }) {
             className="btn primary block"
             onClick={() => {
               downloadAccount();
-              setTimeout(signOut, 400);
+              setTimeout(() => void signOut(), 400);
             }}
           >
             <Download /> Télécharger puis se déconnecter
           </button>
-          <button className="btn block" onClick={signOut}>
+          <button className="btn block" onClick={() => void signOut()}>
             <LogOut /> Se déconnecter sans télécharger
           </button>
           <button className="btn ghost block" onClick={() => setLogoutOpen(false)}>
@@ -271,7 +273,7 @@ export function Profile({ action }: { action?: string }) {
           </button>
           <button
             className="btn danger grow"
-            onClick={eraseEverything}
+            onClick={() => void eraseEverything()}
           >
             <Trash2 /> Tout supprimer
           </button>

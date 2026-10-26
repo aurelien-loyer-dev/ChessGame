@@ -18,6 +18,8 @@ import { ConsentBanner } from './components/ConsentBanner';
 import { useConsent } from './store/consent';
 import { useProfile } from './store/profile';
 import { Toasts } from './components/Toasts';
+import { CloudConflict } from './components/CloudConflict';
+import { useCloud } from './store/cloud';
 
 const Analysis = lazy(() => import('./screens/Analysis').then((m) => ({ default: m.Analysis })));
 
@@ -68,6 +70,10 @@ export function App() {
   const section = route[0] ?? '';
   const activeNav = section === 'game' || section === 'online' ? 'play' : section;
   const immersive = section === 'game' || section === 'online';
+
+  useEffect(() => {
+    useCloud.getState().init();
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -132,6 +138,7 @@ export function App() {
       <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
       {!registered && section !== 'legal' && <Register />}
       <ConsentBanner />
+      <CloudConflict />
       <Toasts />
       {__VERCEL__ && analytics === true && <Analytics />}
     </div>

@@ -88,3 +88,13 @@
 .logout-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
 @media (max-width: 1000px) { .account-actions { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 520px) { .account-actions { grid-template-columns: 1fr; } }
+
+.cloud-card { display: flex; flex-direction: column; gap: 12px; padding: 14px; border-radius: 12px; border: 1px dashed var(--line-strong); background: var(--bg-2); }
+.cloud-card.on { border-style: solid; border-color: rgb(var(--good-rgb) / 0.35); }
+.cloud-card-head { display: flex; align-items: center; gap: 12px; }
+.cloud-card-head > svg { width: 22px; height: 22px; color: var(--accent); flex: none; }
+.cloud-card.on .cloud-card-head > svg { color: rgb(var(--good-rgb)); }
+.cloud-card-head div { display: flex; flex-direction: column; gap: 2px; }
+.cloud-card-head b { font-size: 14px; }
+.cloud-card-head small { font-size: 12px; color: var(--text-faint); }
+.cloud-avatar { width: 34px; height: 34px; border-radius: 50%; flex: none; }
