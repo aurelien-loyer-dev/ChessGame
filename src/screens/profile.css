@@ -61,3 +61,30 @@
   .history-row { grid-template-columns: 80px minmax(0, 1fr) 60px 20px; }
   .history-row > :nth-child(3), .history-row > :nth-child(4), .history-row > :nth-child(5) { display: none; }
 }
+
+.account-panel { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.account-head h3 { font-size: 17px; margin-bottom: 4px; }
+.account-head p { max-width: 80ch; }
+.account-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.account-action {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--bg-2);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 150ms, transform 200ms var(--ease);
+}
+.account-action:hover { border-color: rgb(var(--accent-rgb) / 0.45); transform: translateY(-2px); }
+.account-action > svg { width: 20px; height: 20px; flex: none; color: var(--accent); margin-top: 1px; }
+.account-action span { display: flex; flex-direction: column; gap: 3px; }
+.account-action b { font-size: 14px; }
+.account-action small { font-size: 12px; color: var(--text-faint); line-height: 1.4; }
+.account-action.danger > svg { color: rgb(var(--bad-rgb)); }
+.account-action.danger:hover { border-color: rgb(var(--bad-rgb) / 0.5); }
+.logout-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+@media (max-width: 1000px) { .account-actions { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .account-actions { grid-template-columns: 1fr; } }

@@ -1,4 +1,6 @@
+import { LogOut, UserRound } from 'lucide-react';
 import { Modal } from '../components/ui/Modal';
+import { navigate } from '../lib/router';
 import { BOARD_THEMES, useSettings, type BoardTheme } from '../store/settings';
 import { play } from '../lib/sound';
 import './settings.css';
@@ -55,6 +57,17 @@ export function SettingsModal({ open, onClose }: { open: boolean; onClose: () =>
               onPointerUp={() => play('move')}
             />
           </label>
+        </section>
+        <section className="settings-account">
+          <span className="eyebrow">Compte</span>
+          <div className="controls-row">
+            <button className="btn" onClick={() => { onClose(); navigate('profile'); }}>
+              <UserRound /> Gérer mes données
+            </button>
+            <button className="btn" onClick={() => { onClose(); navigate('profile/logout'); }}>
+              <LogOut /> Se déconnecter
+            </button>
+          </div>
         </section>
         <p className="faint small">
           Raccourcis : <span className="kbd">←</span> <span className="kbd">→</span> naviguer, <span className="kbd">F</span> retourner, clic droit pour dessiner des flèches.
