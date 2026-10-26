@@ -70,7 +70,8 @@ function Dust() {
   );
 }
 
-export default function RegisterScene({ glyph, hue }: { glyph: string; hue: number }) {
+/** `offsetX` slides the showcase sideways to leave room for text over the scene. */
+export default function RegisterScene({ glyph, hue, offsetX = 0 }: { glyph: string; hue: number; offsetX?: number }) {
   return (
     <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 1.6, 4.4], fov: 38 }} gl={{ antialias: true, alpha: true }} onCreated={({ camera }) => camera.lookAt(0, 0.7, 0)}>
       <fog attach="fog" args={['#080c13', 5, 12]} />
@@ -78,7 +79,9 @@ export default function RegisterScene({ glyph, hue }: { glyph: string; hue: numb
       <directionalLight position={[3, 6, 4]} intensity={2} castShadow />
       <pointLight position={[-3, 2, -2]} intensity={18} color="#8fd4ff" />
       <pointLight position={[2.5, 1, 2.5]} intensity={8} color="#e6c27e" />
-      <Showcase glyph={glyph} hue={hue} />
+      <group position={[offsetX, 0, 0]}>
+        <Showcase glyph={glyph} hue={hue} />
+      </group>
       <Dust />
     </Canvas>
   );

@@ -4,6 +4,7 @@ import { ArrowLeft, Eye, EyeOff, Loader2, LogIn, Mail, UserPlus, UserRound } fro
 import { authErrorMessage, sendPasswordReset, signInWithEmail, signUpWithEmail } from '../lib/cloud';
 import { useCloud } from '../store/cloud';
 import { CloudButtons } from '../components/CloudButtons';
+import { Wordmark } from '../components/Wordmark';
 import './register.css';
 
 const RegisterScene = lazy(() => import('../three/RegisterScene'));
@@ -75,11 +76,11 @@ export function AuthScreen() {
     <motion.div className="register auth" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <div className="register-visual" aria-hidden>
         <Suspense fallback={null}>
-          <RegisterScene glyph="♔" hue={200} />
+          <RegisterScene glyph="♔" hue={200} offsetX={0.8} />
         </Suspense>
-        <div className="auth-brand">
-          <p className="eyebrow">EpiChess</p>
-          <h2>Ton échiquier, sur tous tes appareils.</h2>
+        <div className="auth-logo">
+          <Wordmark />
+          <p className="auth-tagline">Ton échiquier, sur tous tes appareils.</p>
         </div>
       </div>
 
