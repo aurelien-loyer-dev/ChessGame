@@ -44,33 +44,6 @@ export function downloadAccount(filename = 'chess-arena-mes-donnees.json') {
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
-/** Restores an export (also accepts the older profile-only format). Returns an error message or null. */
-export async function importAccount(file: File): Promise<string | null> {
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(await file.text());
-  } catch {
-    return 'Ce fichier n’est pas un export Chess Arena.';
-  }
-  const p = parsed as Partial<ExportFile> & { state?: { rating?: unknown } };
-  let entries: [string, string][];
-  if (p.app === 'chess-arena' && p.data && typeof p.data === 'object') {
-    entries = Object.entries(p.data).filter(([k, v]) => k.startsWith(PREFIX) && typeof v === 'string');
-  } else if (p.state && typeof p.state.rating === 'number') {
-    entries = [['arena.profile', JSON.stringify(parsed)]];
-  } else {
-    return 'Ce fichier n’est pas un export Chess Arena.';
-  }
-  if (!entries.some(([k]) => k === 'arena.profile')) return 'Ce fichier ne contient pas de profil.';
-  try {
-    for (const [k, v] of entries) localStorage.setItem(k, v);
-  } catch {
-    return 'Impossible d’enregistrer dans ce navigateur (stockage plein ou bloqué).';
-  }
-  location.reload();
-  return null;
-}
-
 function leaveOnline() {
   try {
     useOnline.getState().leaveGame();

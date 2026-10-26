@@ -21,6 +21,7 @@ import { BotAvatar, ProfileAvatar, UserAvatar, hueFromName } from '../components
 import { Modal } from '../components/ui/Modal';
 import { toast } from '../components/Toasts';
 import type { Arrow } from '../components/board/Board';
+import { useIsGuest } from '../components/GuestGate';
 import './game.css';
 
 export function GameScreen() {
@@ -38,6 +39,7 @@ function OfflineGameView({ session }: { session: OfflineSession }) {
   const rating = useProfile((s) => s.rating);
   const avatar = useProfile((s) => s.avatar);
   const { view3d, set: setSettings } = useSettings();
+  const isGuest = useIsGuest();
   const bot = session.mode === 'bot' ? getBot(session.botId) : undefined;
   const config = useMemo(
     () => ({ mode: session.mode, bot, color: session.color, tc: session.tc, startFen: session.startFen }),
@@ -164,9 +166,11 @@ function OfflineGameView({ session }: { session: OfflineSession }) {
             </div>
           ) : (
             <div className="controls-row">
-              <button className="btn primary grow" onClick={() => navigate(`analysis/${game.outcome!.gameId}`)}>
-                Analyser
-              </button>
+              {!isGuest && (
+                <button className="btn primary grow" onClick={() => navigate(`analysis/${game.outcome!.gameId}`)}>
+                  Analyser
+                </button>
+              )}
               <button className="btn grow" onClick={rematch}>
                 <RefreshCw /> Revanche
               </button>
@@ -211,7 +215,7 @@ function OfflineGameView({ session }: { session: OfflineSession }) {
           names={game.names}
           rating={game.outcome.ratingChange}
           onRematch={rematch}
-          onAnalyse={() => navigate(`analysis/${game.outcome!.gameId}`)}
+          onAnalyse={isGuest ? undefined : () => navigate(`analysis/${game.outcome!.gameId}`)}
           onNew={() => navigate(session.mode === 'bot' ? 'play/bot' : 'play/local')}
         />
       )}

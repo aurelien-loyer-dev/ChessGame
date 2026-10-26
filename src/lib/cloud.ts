@@ -66,19 +66,63 @@ export function toCloudUser(u: User): CloudUser {
 
 export async function signInWith(provider: Provider) {
   const sb = await supabase();
-  const redirectTo = `${location.origin}${location.pathname}`;
+  const redirectTo = siteUrl();
   const { error } = await sb.auth.signInWithOAuth({ provider, options: { redirectTo } });
   if (error) throw error;
 }
 
-/** Resolves the current user (finishing an OAuth redirect if there is one) and reports later changes. */
-export async function watchAuth(onChange: (user: CloudUser | null) => void): Promise<CloudUser | null> {
+/** Resolves the current user (finishing an OAuth or e-mail link redirect if there is one) and reports later changes. */
+export async function watchAuth(onChange: (user: CloudUser | null, event: string) => void): Promise<CloudUser | null> {
   const sb = await supabase();
-  sb.auth.onAuthStateChange((_event, session) => onChange(session?.user ? toCloudUser(session.user) : null));
+  sb.auth.onAuthStateChange((event, session) => onChange(session?.user ? toCloudUser(session.user) : null, event));
   const { data } = await sb.auth.getSession();
   // Drop ?code=… from the address bar once the session has been exchanged.
   if (location.search.includes('code=')) history.replaceState(null, '', location.pathname + location.hash);
   return data.session?.user ? toCloudUser(data.session.user) : null;
+}
+
+function siteUrl() {
+  return `${location.origin}${location.pathname}`;
+}
+
+/** Translates Supabase auth errors into French messages a player can act on. */
+export function authErrorMessage(err: unknown): string {
+  const msg = err instanceof Error ? err.message : String(err ?? '');
+  const code = (err as { code?: string })?.code ?? '';
+  if (code === 'invalid_credentials' || /invalid login credentials/i.test(msg)) return 'E-mail ou mot de passe incorrect.';
+  if (code === 'email_not_confirmed' || /email not confirmed/i.test(msg)) return 'Confirme d’abord ton adresse : ouvre le lien reçu par e-mail.';
+  if (code === 'user_already_exists' || /already registered/i.test(msg)) return 'Un compte existe déjà avec cet e-mail. Connecte-toi.';
+  if (code === 'weak_password' || /password should be/i.test(msg)) return 'Mot de passe trop faible : au moins 8 caractères, avec lettres et chiffres.';
+  if (code === 'over_email_send_rate_limit' || /rate limit/i.test(msg)) return 'Trop de tentatives. Réessaie dans quelques minutes.';
+  if (/fetch|network/i.test(msg)) return 'Service de comptes injoignable. Vérifie ta connexion.';
+  return msg || 'Une erreur est survenue.';
+}
+
+/** Creates an account; returns true when the player must confirm their e-mail before signing in. */
+export async function signUpWithEmail(email: string, password: string): Promise<boolean> {
+  const sb = await supabase();
+  const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: siteUrl() } });
+  if (error) throw error;
+  // With e-mail confirmation on, no session is returned until the link is clicked.
+  return !data.session;
+}
+
+export async function signInWithEmail(email: string, password: string) {
+  const sb = await supabase();
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) throw error;
+}
+
+export async function sendPasswordReset(email: string) {
+  const sb = await supabase();
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: siteUrl() });
+  if (error) throw error;
+}
+
+export async function updatePassword(password: string) {
+  const sb = await supabase();
+  const { error } = await sb.auth.updateUser({ password });
+  if (error) throw error;
 }
 
 export async function cloudSignOut() {
@@ -94,12 +138,12 @@ export async function loadSave(userId: string): Promise<CloudSave | null> {
   return { data: data.data as Record<string, string>, updatedAt: new Date(data.updated_at as string).getTime() };
 }
 
+/** Upserts the player's save and returns the server-side timestamp (set by a trigger). */
 export async function writeSave(userId: string, data: Record<string, string>): Promise<number> {
   const sb = await supabase();
-  const updatedAt = new Date().toISOString();
-  const { error } = await sb.from('saves').upsert({ user_id: userId, data, updated_at: updatedAt });
+  const { data: row, error } = await sb.from('saves').upsert({ user_id: userId, data }).select('updated_at').single();
   if (error) throw error;
-  return new Date(updatedAt).getTime();
+  return new Date(row.updated_at as string).getTime();
 }
 
 export async function deleteCloudAccount() {

@@ -112,9 +112,9 @@ function Privacy() {
       <section>
         <h2>En bref</h2>
         <p>
-          Par défaut, ton profil (pseudo, emblème, niveau, classements, historique des parties, progression des cours et puzzles, réglages) est
-          enregistré uniquement dans le stockage local de ton navigateur. Si tu te connectes avec GitHub ou Google, une copie de ce profil est
-          sauvegardée en ligne pour que tu le retrouves sur tes autres appareils.
+          Pour jouer avec toutes les fonctionnalités, tu crées un compte (e-mail et mot de passe, ou GitHub / Google). Ton profil (pseudo, emblème,
+          niveau, classements, historique des parties, progression des cours et puzzles, réglages) est alors sauvegardé sur ton compte et dans ton
+          navigateur. En mode invité, rien n’est envoyé : les réglages restent dans ton navigateur et les parties ne sont pas enregistrées.
         </p>
       </section>
       <section>
@@ -142,7 +142,7 @@ function Privacy() {
               <td>Exécution du service</td>
             </tr>
             <tr>
-              <td>Compte en ligne (facultatif) : identifiant, e-mail, nom et photo fournis par GitHub ou Google, et sauvegarde du profil</td>
+              <td>Compte : e-mail, mot de passe (stocké chiffré par Supabase, jamais visible par l’éditeur) ou identifiant, nom et photo fournis par GitHub / Google, et sauvegarde du profil</td>
               <td>Supabase (base de données hébergée dans l’Union européenne)</td>
               <td>Te connecter et synchroniser ton profil entre tes appareils</td>
               <td>Exécution du service, à ta demande</td>
@@ -179,8 +179,9 @@ function Privacy() {
       <section>
         <h2>Compte en ligne</h2>
         <p>
-          La connexion passe par GitHub ou Google : Chess Arena ne voit jamais ton mot de passe et ne reçoit que les informations de base
-          de ton compte (identifiant, e-mail, nom, photo). Les comptes et les sauvegardes sont gérés par Supabase Inc., sous-traitant de l’éditeur.
+          Avec un e-mail et un mot de passe, le mot de passe est haché par Supabase : ni l’éditeur ni l’application n’y ont accès. Avec GitHub
+          ou Google, Chess Arena ne voit jamais ton mot de passe et ne reçoit que les informations de base de ton compte (identifiant, e-mail,
+          nom, photo). Des e-mails de service (confirmation d’adresse, réinitialisation du mot de passe) peuvent t’être envoyés. Les comptes et les sauvegardes sont gérés par Supabase Inc., sous-traitant de l’éditeur.
           Chaque sauvegarde n’est lisible que par son propriétaire. Tu peux supprimer ton compte en ligne à tout moment depuis la page Profil.
         </p>
       </section>
@@ -254,6 +255,11 @@ function Cookies() {
               <td className="mono">arena.cloud-auth, arena.cloud</td>
               <td>Session de connexion au compte en ligne et suivi de la synchronisation</td>
               <td>Non requis (uniquement si tu te connectes)</td>
+            </tr>
+            <tr>
+              <td className="mono">arena.guest</td>
+              <td>Mémorise le mode invité jusqu’à la fermeture de l’onglet</td>
+              <td>Non requis</td>
             </tr>
             <tr>
               <td className="mono">arena.consent</td>

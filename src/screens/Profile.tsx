@@ -1,8 +1,9 @@
 import { HomeButton } from '../components/HomeButton';
 import { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
-import { Activity, Crown, Download, LogOut, Pencil, Trash2, Upload } from 'lucide-react';
-import { downloadAccount, eraseEverything, importAccount, signOut } from '../lib/account';
+import { Activity, Crown, Download, LogOut, Pencil, Trash2 } from 'lucide-react';
+import { downloadAccount, eraseEverything, signOut } from '../lib/account';
+import { useCloud } from '../store/cloud';
 import { CloudCard } from '../components/CloudCard';
 import { useProfile } from '../store/profile';
 import { BOTS } from '../lib/engine/bots';
@@ -13,12 +14,12 @@ import { RatingChart } from '../components/RatingChart';
 import { Modal } from '../components/ui/Modal';
 import { REASON_LABEL } from '../game/line';
 import { COURSES } from '../data/lessons';
-import { toast } from '../components/Toasts';
 import { NAME_MAX, sanitizeName } from '../lib/types';
 import './profile.css';
 
 export function Profile({ action }: { action?: string }) {
   const p = useProfile();
+  const cloudUser = useCloud((s) => s.user);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(p.name);
   const [resetOpen, setResetOpen] = useState(false);
@@ -44,11 +45,6 @@ export function Profile({ action }: { action?: string }) {
     if (!clean) return;
     p.setName(clean);
     setEditing(false);
-  };
-
-  const onImport = async (file: File) => {
-    const err = await importAccount(file);
-    if (err) toast(err, 'bad');
   };
 
   const outcomeOf = (g: (typeof p.games)[number]) => {
@@ -200,8 +196,10 @@ export function Profile({ action }: { action?: string }) {
         <div className="account-head">
           <h3>Compte et données personnelles</h3>
           <p className="dim small">
-            Ton profil n’existe que dans ce navigateur : aucun serveur ne le conserve. Tu peux le télécharger, le transférer sur un autre appareil,
-            te déconnecter ou tout effacer à tout moment. <a href="#/legal/confidentialite">Politique de confidentialité</a>
+            {cloudUser
+              ? 'Ton profil est sauvegardé sur ton compte et sur cet appareil. Tu peux télécharger tes données, te déconnecter ou tout effacer à tout moment. '
+              : 'Ton profil n’existe que dans ce navigateur. Tu peux télécharger tes données, te déconnecter ou tout effacer à tout moment. '}
+            <a href="#/legal/confidentialite">Politique de confidentialité</a>
           </p>
         </div>
         <CloudCard />
@@ -213,14 +211,6 @@ export function Profile({ action }: { action?: string }) {
               <small>Fichier JSON avec ton profil, tes parties et tes réglages</small>
             </span>
           </button>
-          <label className="account-action">
-            <Upload />
-            <span>
-              <b>Importer un profil</b>
-              <small>Remplace le profil actuel par un export</small>
-            </span>
-            <input type="file" accept="application/json" hidden onChange={(e) => e.target.files?.[0] && onImport(e.target.files[0])} />
-          </label>
           <button className="account-action" onClick={() => setLogoutOpen(true)}>
             <LogOut />
             <span>
@@ -232,7 +222,7 @@ export function Profile({ action }: { action?: string }) {
             <Trash2 />
             <span>
               <b>Supprimer toutes mes données</b>
-              <small>Profil, parties, réglages et choix cookies</small>
+              <small>Sur cet appareil : profil, parties, réglages et choix cookies</small>
             </span>
           </button>
         </div>
@@ -240,22 +230,32 @@ export function Profile({ action }: { action?: string }) {
 
       <Modal open={logoutOpen} onClose={() => setLogoutOpen(false)} title="Se déconnecter ?" width={440}>
         <p className="dim">
-          Ton profil sera retiré de ce navigateur. Pour le retrouver plus tard, ici ou sur un autre appareil, télécharge d’abord tes données puis
-          utilise « J’ai déjà un profil » à l’inscription.
+          {cloudUser
+            ? 'Tes derniers changements sont sauvegardés sur ton compte, puis ton profil est retiré de cet appareil. Reconnecte-toi pour le retrouver.'
+            : 'Ton profil sera retiré de ce navigateur et ne pourra pas être récupéré, sauf si tu télécharges tes données avant.'}
         </p>
         <div className="logout-actions">
-          <button
-            className="btn primary block"
-            onClick={() => {
-              downloadAccount();
-              setTimeout(() => void signOut(), 400);
-            }}
-          >
-            <Download /> Télécharger puis se déconnecter
-          </button>
-          <button className="btn block" onClick={() => void signOut()}>
-            <LogOut /> Se déconnecter sans télécharger
-          </button>
+          {cloudUser && (
+            <button className="btn primary block" onClick={() => void signOut()}>
+              <LogOut /> Se déconnecter
+            </button>
+          )}
+          {!cloudUser && (
+            <>
+              <button
+                className="btn primary block"
+                onClick={() => {
+                  downloadAccount();
+                  setTimeout(() => void signOut(), 400);
+                }}
+              >
+                <Download /> Télécharger puis se déconnecter
+              </button>
+              <button className="btn block" onClick={() => void signOut()}>
+                <LogOut /> Se déconnecter sans télécharger
+              </button>
+            </>
+          )}
           <button className="btn ghost block" onClick={() => setLogoutOpen(false)}>
             Annuler
           </button>

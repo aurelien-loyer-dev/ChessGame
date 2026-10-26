@@ -14,6 +14,8 @@ import { REASON_LABEL } from '../game/line';
 import { TIME_CONTROLS } from '../lib/types';
 import { parseUci } from '../lib/chess';
 import { PUBLISHER } from '../data/legal';
+import { useIsGuest } from '../components/GuestGate';
+import { useCloud } from '../store/cloud';
 import './home.css';
 
 const Hero3D = lazy(() => import('../three/Hero3D'));
@@ -29,6 +31,8 @@ const rise = {
 
 export function Home() {
   const profile = useProfile();
+  const isGuest = useIsGuest();
+  const setGuest = useCloud((s) => s.setGuest);
   const { prefs, startOffline } = useSession();
   const bot = getBot(profile.lastBotId);
   const daily = useMemo(() => dailyPuzzle(), []);
@@ -84,7 +88,17 @@ export function Home() {
               <Wifi /> En ligne
             </button>
           </motion.div>
-          <motion.dl variants={rise} className="hero-stats">
+          {isGuest && (
+            <motion.div variants={rise} className="guest-banner">
+              <span>
+                <b>Mode invité.</b> Tes parties ne sont pas sauvegardées et les cours, puzzles et jeu en ligne sont verrouillés.
+              </span>
+              <button className="btn sm primary" onClick={() => setGuest(false)}>
+                Créer un compte
+              </button>
+            </motion.div>
+          )}
+          <motion.dl variants={rise} className="hero-stats" hidden={isGuest}>
             <div>
               <dt>Elo</dt>
               <dd className="mono brass">{profile.rating}</dd>
