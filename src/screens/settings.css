@@ -7,3 +7,4 @@
 .settings-toggles { gap: 12px !important; }
 .volume-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-weight: 600; font-size: 14px; }
 .volume-row input { flex: 1; max-width: 240px; accent-color: var(--accent); }
+.settings-account .btn { flex: 1; }

@@ -179,16 +179,24 @@ function Privacy() {
       <section>
         <h2>Durée de conservation</h2>
         <p>
-          Les données locales restent dans ton navigateur jusqu’à ce que tu les effaces (bouton « Réinitialiser » de la page Profil, ou effacement des
+          Les données locales restent dans ton navigateur jusqu’à ce que tu les effaces (bouton « Supprimer toutes mes données » de la page Profil, ou effacement des
           données du site). Les journaux de l’hébergeur sont conservés selon sa propre politique.
         </p>
       </section>
       <section>
         <h2>Tes droits</h2>
         <p>
-          Tu disposes des droits d’accès, de rectification, d’effacement, d’opposition et de portabilité. Pour tes données locales, tu les exerces
-          toi-même depuis la page Profil (modification, export, réinitialisation). Pour toute autre demande, contacte l’éditeur : <Contact />. Tu peux
-          aussi adresser une réclamation à la CNIL (cnil.fr).
+          Tu disposes des droits d’accès, de rectification, d’effacement, d’opposition et de portabilité. Comme tes données sont dans ton navigateur,
+          tu les exerces directement depuis la section « Compte et données personnelles » de la page Profil :
+        </p>
+        <ul className="legal-list">
+          <li><b>Accès et portabilité</b> : « Télécharger mes données » produit un fichier JSON complet et lisible.</li>
+          <li><b>Rectification</b> : modifie ton pseudo depuis le profil.</li>
+          <li><b>Déconnexion</b> : « Se déconnecter » retire ton profil de cet appareil, avec la possibilité de l’exporter avant.</li>
+          <li><b>Effacement</b> : « Supprimer toutes mes données » efface définitivement profil, parties, réglages et choix cookies.</li>
+        </ul>
+        <p>
+          Pour toute autre demande, contacte l’éditeur : <Contact />. Tu peux aussi adresser une réclamation à la CNIL (cnil.fr).
         </p>
       </section>
     </>

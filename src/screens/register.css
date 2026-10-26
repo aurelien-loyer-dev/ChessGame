@@ -157,3 +157,6 @@
   pointer-events: none;
 }
 .welcome-copy { z-index: 1; }
+.import-link { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; font-size: 13px; font-weight: 600; color: var(--accent); cursor: pointer; }
+.import-link svg { width: 15px; height: 15px; }
+.import-link:hover { text-decoration: underline; }

@@ -52,7 +52,7 @@ function Screen({ route }: { route: string[] }) {
         </Suspense>
       );
     case 'profile':
-      return <Profile />;
+      return <Profile action={a} />;
     case 'legal':
       return <Legal doc={a} />;
     default:

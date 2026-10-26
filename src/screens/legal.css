@@ -10,3 +10,5 @@
 .legal-table th { font: 600 11px/1.2 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
 .legal-table td { color: var(--text-dim); }
 @media (max-width: 640px) { .legal-facts { grid-template-columns: 1fr; gap: 2px; } .legal-facts dd { margin-bottom: 10px; } }
+.legal-list { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; color: var(--text-dim); font-size: 14.5px; line-height: 1.55; max-width: 72ch; }
+.legal-list b { color: var(--text); }

@@ -1,6 +1,7 @@
 import { lazy, Suspense, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowLeft, ArrowRight, Check, GraduationCap, Sparkles, Swords } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, GraduationCap, Sparkles, Swords, Upload } from 'lucide-react';
+import { importAccount } from '../lib/account';
 import { NAME_MAX, sanitizeName } from '../lib/types';
 import { LEVELS, useProfile, type PlayerLevel } from '../store/profile';
 import { getBot } from '../lib/engine/bots';
@@ -26,6 +27,7 @@ export function Register() {
   const [level, setLevel] = useState<PlayerLevel | null>(profile.level);
   const [accepted, setAccepted] = useState(false);
   const [welcome, setWelcome] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
 
   const clean = sanitizeName(name);
   const nameError = name && clean.length < 3 ? 'Au moins 3 caractères (lettres, chiffres, espace, - ou _).' : null;
@@ -113,6 +115,21 @@ export function Register() {
                     />
                   </label>
                   <p className={`hint ${nameError ? 'error' : ''}`}>{nameError ?? `${clean.length}/${NAME_MAX} caractères`}</p>
+                  <label className="import-link">
+                    <Upload /> J’ai déjà un profil : importer mon fichier
+                    <input
+                      type="file"
+                      accept="application/json"
+                      hidden
+                      onChange={async (e) => {
+                        const f = e.target.files?.[0];
+                        if (!f) return;
+                        const err = await importAccount(f);
+                        if (err) setImportError(err);
+                      }}
+                    />
+                  </label>
+                  {importError && <p className="hint error">{importError}</p>}
                 </>
               )}
 

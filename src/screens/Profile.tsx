@@ -1,7 +1,8 @@
 import { HomeButton } from '../components/HomeButton';
 import { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
-import { Activity, Crown, Download, Pencil, Trash2, Upload } from 'lucide-react';
+import { Activity, Crown, Download, LogOut, Pencil, Trash2, Upload } from 'lucide-react';
+import { downloadAccount, eraseEverything, importAccount, signOut } from '../lib/account';
 import { useProfile } from '../store/profile';
 import { BOTS } from '../lib/engine/bots';
 import { navigate } from '../lib/router';
@@ -15,11 +16,12 @@ import { toast } from '../components/Toasts';
 import { NAME_MAX, sanitizeName } from '../lib/types';
 import './profile.css';
 
-export function Profile() {
+export function Profile({ action }: { action?: string }) {
   const p = useProfile();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(p.name);
   const [resetOpen, setResetOpen] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(action === 'logout');
   const [filter, setFilter] = useState<'all' | 'bot' | 'online' | 'local'>('all');
 
   const stats = useMemo(() => {
@@ -43,27 +45,9 @@ export function Profile() {
     setEditing(false);
   };
 
-  const exportData = () => {
-    const raw = localStorage.getItem('arena.profile') ?? '{}';
-    const blob = new Blob([raw], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'chess-arena-profil.json';
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  };
-
-  const importData = (file: File) => {
-    file.text().then((text) => {
-      try {
-        const parsed = JSON.parse(text);
-        if (!parsed?.state || typeof parsed.state.rating !== 'number') throw new Error();
-        localStorage.setItem('arena.profile', text);
-        location.reload();
-      } catch {
-        toast('Fichier de profil invalide', 'bad');
-      }
-    });
+  const onImport = async (file: File) => {
+    const err = await importAccount(file);
+    if (err) toast(err, 'bad');
   };
 
   const outcomeOf = (g: (typeof p.games)[number]) => {
@@ -211,40 +195,85 @@ export function Profile() {
         )}
       </section>
 
-      <section className="panel data-panel">
-        <div>
-          <h3>Tes données</h3>
-          <p className="dim small">Tout est stocké dans ce navigateur. Exporte un fichier pour le transférer sur un autre appareil.</p>
+      <section className="panel account-panel">
+        <div className="account-head">
+          <h3>Compte et données personnelles</h3>
+          <p className="dim small">
+            Ton profil n’existe que dans ce navigateur : aucun serveur ne le conserve. Tu peux le télécharger, le transférer sur un autre appareil,
+            te déconnecter ou tout effacer à tout moment. <a href="#/legal/confidentialite">Politique de confidentialité</a>
+          </p>
         </div>
-        <div className="controls-row">
-          <button className="btn" onClick={exportData}>
-            <Download /> Exporter
+        <div className="account-actions">
+          <button className="account-action" onClick={() => downloadAccount()}>
+            <Download />
+            <span>
+              <b>Télécharger mes données</b>
+              <small>Fichier JSON avec ton profil, tes parties et tes réglages</small>
+            </span>
           </button>
-          <label className="btn">
-            <Upload /> Importer
-            <input type="file" accept="application/json" hidden onChange={(e) => e.target.files?.[0] && importData(e.target.files[0])} />
+          <label className="account-action">
+            <Upload />
+            <span>
+              <b>Importer un profil</b>
+              <small>Remplace le profil actuel par un export</small>
+            </span>
+            <input type="file" accept="application/json" hidden onChange={(e) => e.target.files?.[0] && onImport(e.target.files[0])} />
           </label>
-          <button className="btn danger" onClick={() => setResetOpen(true)}>
-            <Trash2 /> Réinitialiser
+          <button className="account-action" onClick={() => setLogoutOpen(true)}>
+            <LogOut />
+            <span>
+              <b>Se déconnecter</b>
+              <small>Retire ton profil de cet appareil</small>
+            </span>
+          </button>
+          <button className="account-action danger" onClick={() => setResetOpen(true)}>
+            <Trash2 />
+            <span>
+              <b>Supprimer toutes mes données</b>
+              <small>Profil, parties, réglages et choix cookies</small>
+            </span>
           </button>
         </div>
       </section>
 
-      <Modal open={resetOpen} onClose={() => setResetOpen(false)} title="Effacer le profil ?" width={400}>
-        <p className="dim">Profil, classements, historique, puzzles et progression des cours seront supprimés de ce navigateur. Tu repasseras par l’inscription.</p>
+      <Modal open={logoutOpen} onClose={() => setLogoutOpen(false)} title="Se déconnecter ?" width={440}>
+        <p className="dim">
+          Ton profil sera retiré de ce navigateur. Pour le retrouver plus tard, ici ou sur un autre appareil, télécharge d’abord tes données puis
+          utilise « J’ai déjà un profil » à l’inscription.
+        </p>
+        <div className="logout-actions">
+          <button
+            className="btn primary block"
+            onClick={() => {
+              downloadAccount();
+              setTimeout(signOut, 400);
+            }}
+          >
+            <Download /> Télécharger puis se déconnecter
+          </button>
+          <button className="btn block" onClick={signOut}>
+            <LogOut /> Se déconnecter sans télécharger
+          </button>
+          <button className="btn ghost block" onClick={() => setLogoutOpen(false)}>
+            Annuler
+          </button>
+        </div>
+      </Modal>
+
+      <Modal open={resetOpen} onClose={() => setResetOpen(false)} title="Supprimer toutes tes données ?" width={420}>
+        <p className="dim">
+          Profil, classements, historique, puzzles, progression des cours, réglages et choix cookies seront définitivement effacés de ce navigateur.
+          Cette action est irréversible.
+        </p>
         <div className="controls-row" style={{ marginTop: 18 }}>
           <button className="btn grow" onClick={() => setResetOpen(false)}>
             Annuler
           </button>
           <button
             className="btn danger grow"
-            onClick={() => {
-              p.reset();
-              setResetOpen(false);
-              toast('Profil réinitialisé');
-            }}
+            onClick={eraseEverything}
           >
-            <Trash2 /> Effacer
+            <Trash2 /> Tout supprimer
           </button>
         </div>
       </Modal>
