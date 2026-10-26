@@ -72,6 +72,8 @@ Les sauvegardes et la connexion GitHub / Google passent par [Supabase](https://s
    `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` (et `VITE_AUTH_PROVIDERS=github` pour n'afficher que GitHub).
 6. Redéploie. Les boutons de connexion apparaissent à l'inscription et dans le profil.
 
+**Sécurité** : `VITE_SUPABASE_URL` et la clé `anon` sont intégrées au JavaScript du site, c'est voulu. La protection repose sur la RLS de la migration : sans connexion, aucun accès à la table ; connecté, chaque joueur ne peut lire, écrire ou supprimer que sa propre ligne, et la date de sauvegarde est fixée par le serveur. Ne mets jamais la clé `service_role` dans une variable `VITE_`. Après la migration, l'onglet **Advisors → Security** de Supabase ne doit signaler aucune alerte sur `saves`.
+
 La synchronisation est automatique : chaque changement est envoyé quelques secondes après ; à la connexion sur un nouvel appareil, la sauvegarde est restaurée ; si les deux versions ont changé, le joueur choisit laquelle garder.
 
 ## Crédits

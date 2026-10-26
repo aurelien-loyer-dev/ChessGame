@@ -94,12 +94,12 @@ export async function loadSave(userId: string): Promise<CloudSave | null> {
   return { data: data.data as Record<string, string>, updatedAt: new Date(data.updated_at as string).getTime() };
 }
 
+/** Upserts the player's save and returns the server-side timestamp (set by a trigger). */
 export async function writeSave(userId: string, data: Record<string, string>): Promise<number> {
   const sb = await supabase();
-  const updatedAt = new Date().toISOString();
-  const { error } = await sb.from('saves').upsert({ user_id: userId, data, updated_at: updatedAt });
+  const { data: row, error } = await sb.from('saves').upsert({ user_id: userId, data }).select('updated_at').single();
   if (error) throw error;
-  return new Date(updatedAt).getTime();
+  return new Date(row.updated_at as string).getTime();
 }
 
 export async function deleteCloudAccount() {
