@@ -87,7 +87,7 @@ function Mentions() {
       <section>
         <h2>Propriété intellectuelle</h2>
         <p>
-          La conception, le code et les contenus pédagogiques de Chess Arena sont la propriété de {PUBLISHER.name}, sauf mention contraire. Le code
+          La conception, le code et les contenus pédagogiques de EpiChess sont la propriété de {PUBLISHER.name}, sauf mention contraire. Le code
           source est diffusé sous licence MIT.
         </p>
         <p>
@@ -98,7 +98,7 @@ function Mentions() {
       <section>
         <h2>Responsabilité</h2>
         <p>
-          Chess Arena est un service gratuit fourni en l’état. L’éditeur s’efforce d’en assurer la disponibilité mais ne peut garantir l’absence
+          EpiChess est un service gratuit fourni en l’état. L’éditeur s’efforce d’en assurer la disponibilité mais ne peut garantir l’absence
           d’interruption, notamment pour le jeu en ligne qui dépend d’un service tiers de mise en relation.
         </p>
       </section>
@@ -180,7 +180,7 @@ function Privacy() {
         <h2>Compte en ligne</h2>
         <p>
           Avec un e-mail et un mot de passe, le mot de passe est haché par Supabase : ni l’éditeur ni l’application n’y ont accès. Avec GitHub
-          ou Google, Chess Arena ne voit jamais ton mot de passe et ne reçoit que les informations de base de ton compte (identifiant, e-mail,
+          ou Google, EpiChess ne voit jamais ton mot de passe et ne reçoit que les informations de base de ton compte (identifiant, e-mail,
           nom, photo). Des e-mails de service (confirmation d’adresse, réinitialisation du mot de passe) peuvent t’être envoyés. Les comptes et les sauvegardes sont gérés par Supabase Inc., sous-traitant de l’éditeur.
           Chaque sauvegarde n’est lisible que par son propriétaire. Tu peux supprimer ton compte en ligne à tout moment depuis la page Profil.
         </p>
@@ -226,7 +226,7 @@ function Cookies() {
     <>
       <section>
         <h2>Ce que le site dépose</h2>
-        <p>Chess Arena ne dépose aucun cookie publicitaire ni de réseau social. Il utilise le stockage local du navigateur pour :</p>
+        <p>EpiChess ne dépose aucun cookie publicitaire ni de réseau social. Il utilise le stockage local du navigateur pour :</p>
         <table className="legal-table">
           <thead>
             <tr>

@@ -107,7 +107,7 @@ export function App() {
     <div className={`shell ${immersive ? 'immersive' : ''}`}>
       <div className="backdrop" aria-hidden />
       <nav className="rail" aria-label="Navigation principale">
-        <button className="rail-logo" onClick={() => navigate('')} aria-label="Accueil Chess Arena">
+        <button className="rail-logo" onClick={() => navigate('')} aria-label="Accueil EpiChess">
           <svg viewBox="0 0 32 32" aria-hidden>
             <path d="M16 3l3 4h-6zM11 9h10l-2 11h-6zM8 22h16l1.5 4h-19zM6 27h20v2H6z" />
           </svg>

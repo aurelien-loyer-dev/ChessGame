@@ -78,7 +78,7 @@ export function AuthScreen() {
           <RegisterScene glyph="♔" hue={200} />
         </Suspense>
         <div className="auth-brand">
-          <p className="eyebrow">Chess Arena</p>
+          <p className="eyebrow">EpiChess</p>
           <h2>Ton échiquier, sur tous tes appareils.</h2>
         </div>
       </div>

@@ -13,7 +13,7 @@ const PREFIX = 'arena.';
 const ACCOUNT_KEYS = ['arena.profile', 'arena.session'];
 
 interface ExportFile {
-  app: 'chess-arena';
+  app: 'epichess';
   version: 1;
   exportedAt: string;
   data: Record<string, string>;
@@ -33,10 +33,10 @@ function appKeys(): string[] {
 }
 
 /** Everything the app stores about the player, as a downloadable JSON file (GDPR portability). */
-export function downloadAccount(filename = 'chess-arena-mes-donnees.json') {
+export function downloadAccount(filename = 'epichess-mes-donnees.json') {
   const data: Record<string, string> = {};
   for (const k of appKeys()) data[k] = localStorage.getItem(k) ?? '';
-  const file: ExportFile = { app: 'chess-arena', version: 1, exportedAt: new Date().toISOString(), data };
+  const file: ExportFile = { app: 'epichess', version: 1, exportedAt: new Date().toISOString(), data };
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([JSON.stringify(file, null, 2)], { type: 'application/json' }));
   a.download = filename;
